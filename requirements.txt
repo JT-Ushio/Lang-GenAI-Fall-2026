@@ -1,0 +1,4 @@
+# Python >= 3.10; dependencies used by the inherited lecture compiler.
+torch>=2.8,<3
+sympy>=1.14,<2
+requests>=2.32,<3

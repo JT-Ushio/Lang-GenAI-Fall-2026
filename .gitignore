@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Lecture build outputs and frontend dependencies
+.DS_Store
+node_modules/
+lectures/var/
+lectures/trace-viewer/dist/

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="140" viewBox="0 0 640 140">
+  <rect width="640" height="140" rx="16" fill="#eef2ff"/>
+  <g font-family="sans-serif" text-anchor="middle" font-size="20" fill="#1e293b">
+    <rect x="24" y="40" width="160" height="60" rx="8" fill="#c7d2fe"/>
+    <rect x="240" y="40" width="160" height="60" rx="8" fill="#c7d2fe"/>
+    <rect x="456" y="40" width="160" height="60" rx="8" fill="#c7d2fe"/>
+    <text x="104" y="77">Python lecture</text>
+    <text x="212" y="77">→</text>
+    <text x="320" y="77">JSON trace</text>
+    <text x="428" y="77">→</text>
+    <text x="536" y="77">Trace Viewer</text>
+  </g>
+</svg>
