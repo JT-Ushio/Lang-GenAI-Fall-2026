@@ -4,6 +4,8 @@
 
 第一讲：`cd lectures && python3 execute.py -m lecture_01`，浏览 `?trace=var/traces/lecture_01.json`。时间分配、讨论参考与待确认事项见 [第一讲备课说明](lectures/notes/lecture_01.md)。
 
+第二讲：`cd lectures && python3 execute.py -m lecture_02`，浏览 `?trace=var/traces/lecture_02.json`。包含灰度图、RGB、音频采样率试听、视频帧与音轨、点云与网格，以及图文、语音文本、视频文本、点云文本协同任务；见 [第二讲备课说明](lectures/notes/lecture_02.md)。素材已经包含在仓库中，常规编译无需重新生成。
+
 课件框架复用 [2026 春季《自然语言处理与语言习得》](https://github.com/JT-Ushio/nlp-and-la-spring-2026) 的 Python 执行轨迹生成器和 React Trace Viewer，保留 Markdown、公式、图片、链接、代码与变量展示、逐步浏览等功能。
 
 ## 安装与运行
@@ -41,6 +43,8 @@ npm run dev -- --host 127.0.0.1
 左右方向键逐步浏览，Shift + 左右方向键跳过函数，大写 R（Shift + R）切换源码，大写 A（Shift + A）切换逐步展示。
 
 ## 视频
+
+也支持独立音频：`from execute_util import audio`，调用 `audio("videos/lecture_02/speech_48000.wav")`。音频采用原生控件，切换步骤暂停。普通 `print()` 的实际运行输出会显示在对应代码行下方；源码模式只显示代码。
 
 支持本地视频与 HTTP(S) 视频直链（浏览器原生播放器），以及 B站 BV 链接（官方内嵌播放器）：
 

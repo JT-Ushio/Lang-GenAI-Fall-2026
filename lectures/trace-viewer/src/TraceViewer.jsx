@@ -77,7 +77,7 @@ function BilibiliRenderer({ rendering }) {
 }
 
 
-function VideoRenderer({ src, style, playbackKey }) {
+function VideoRenderer({ src, style, playbackKey, audioOnly = false }) {
   const videoRef = useRef(null);
   const [failed, setFailed] = useState(false);
 
@@ -91,13 +91,15 @@ function VideoRenderer({ src, style, playbackKey }) {
     return () => element?.pause();
   }, [src, playbackKey]);
 
+  const Media = audioOnly ? 'audio' : 'video';
+  const label = audioOnly ? '音频' : '视频';
   return (
     <span>
-      <video ref={videoRef} src={src} controls playsInline preload="metadata"
-        aria-label="课件视频"
+      <Media ref={videoRef} src={src} controls playsInline preload="metadata"
+        aria-label={`课件${label}`}
         style={{ maxWidth: '100%', ...style }}
         onError={() => setFailed(true)} />
-      {failed && <span role="alert">视频加载失败，请检查链接或视频编码。<a href={src}>打开视频</a></span>}
+      {failed && <span role="alert">{label}加载失败，请检查链接或编码。<a href={src}>打开{label}</a></span>}
     </span>
   );
 }
@@ -150,7 +152,7 @@ function TraceViewer() {
     }
 
     const handleKeyDown = (event) => {
-      if (event.target.closest?.('video')) return;
+      if (event.target.closest?.('video, audio')) return;
       if (event.altKey || event.ctrlKey) {  // Don't capture alt-right (for web page navigation)
         return;
       }
@@ -533,8 +535,11 @@ function renderLines({trace, currentPath, currentLineNumber, currentStepIndex, t
 
   // Build a map of line number to renderings
   const lineNumberToRenderings = [];
+  const lineNumberToOutput = [];
   for (const step of trace.steps) {
+    if (getLast(step.stack).path !== currentPath) continue;
     lineNumberToRenderings[getLast(step.stack).line_number] = step.renderings;
+    lineNumberToOutput[getLast(step.stack).line_number] = (step.stdout || '') + (step.stderr || '');
   }
 
   // Get the file contents that we're showing
@@ -568,6 +573,12 @@ function renderLines({trace, currentPath, currentLineNumber, currentStepIndex, t
     } else {
       // Note: line is HTML for syntax highlighting
       renderedItems.push(<span key="code" className="code-container" dangerouslySetInnerHTML={{ __html: line }} />);
+    }
+
+    const output = lineNumberToOutput[lineNumber];
+    if (!rawMode && output) {
+      renderedItems.push(<pre key="output" aria-label="代码运行输出"
+        style={{ whiteSpace: 'pre-wrap', background: '#eef5f8', padding: '12px', margin: '8px 0', borderLeft: '3px solid #337b93' }}>{output}</pre>);
     }
 
     const lineNumberSpan = (
@@ -786,6 +797,8 @@ function renderRendering(rendering, navigate, playbackKey) {
     return <img src={rendering.data} style={rendering.style} />;
   } else if (rendering.type === "video") {
     return <VideoRenderer src={rendering.data} style={rendering.style} playbackKey={playbackKey} />;
+  } else if (rendering.type === "audio") {
+    return <VideoRenderer src={rendering.data} style={rendering.style} playbackKey={playbackKey} audioOnly />;
   } else if (rendering.type === "bilibili") {
     // Cross-origin players cannot be paused through the native video API.
     // Unmount when leaving a step so audio cannot continue in the background.

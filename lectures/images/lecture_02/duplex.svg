@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="490" viewBox="0 0 1100 490">
+<rect width="1100" height="490" rx="20" fill="#f4f8fb"/>
+<g font-family="sans-serif" fill="#17334a">
+<text x="45" y="48" font-size="27" font-weight="bold">语音交互：方向与时间</text>
+<text x="45" y="78" font-size="17">条带表示有效传递；全双工允许两个方向在时间上重叠。</text>
+<g font-size="20"><text x="45" y="138">单工</text><text x="45" y="243">半双工</text><text x="45" y="353">全双工</text></g>
+<g font-size="17"><text x="180" y="127">用户 → 系统</text><text x="180" y="165">系统 → 用户</text><text x="180" y="232">用户 → 系统</text><text x="180" y="270">系统 → 用户</text><text x="180" y="342">用户 → 系统</text><text x="180" y="380">系统 → 用户</text></g>
+<g stroke="#dae2e7" stroke-width="2"><path d="M335 125H1030 M335 163H1030 M335 230H1030 M335 268H1030 M335 340H1030 M335 378H1030"/></g>
+<g fill="#278a91"><rect x="345" y="110" width="650" height="22" rx="6"/><rect x="345" y="215" width="210" height="22" rx="6"/><rect x="790" y="215" width="205" height="22" rx="6"/><rect x="345" y="325" width="235" height="22" rx="6"/><rect x="730" y="325" width="265" height="22" rx="6"/></g>
+<g fill="#dc8843"><rect x="565" y="253" width="215" height="22" rx="6"/><rect x="490" y="363" width="320" height="22" rx="6"/><rect x="895" y="363" width="100" height="22" rx="6"/></g>
+<text x="355" y="166" font-size="16" fill="#748894">该例无反向传递</text>
+<path d="M335 418H1030l-12 -6m12 6l-12 6" fill="none" stroke="#17334a" stroke-width="2"/>
+<text x="970" y="450" font-size="17">时间 →</text>
+<text x="45" y="478" font-size="16">通信方式示意；不表示具体模型的实际延迟。流式处理、可打断与全双工是不同维度。</text>
+</g></svg>

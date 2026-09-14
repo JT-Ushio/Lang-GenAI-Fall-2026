@@ -28,6 +28,7 @@ class Rendering:
     - markdown: to be rendered as markdown
     - image: an image (data = url)
     - video: a local video or HTTP(S) media URL (data = url)
+    - audio: a local audio file or HTTP(S) media URL (data = url)
     - bilibili: an official embedded player (data = player URL)
     - link: an link to internal code or external URL
     """
@@ -102,6 +103,13 @@ def video(url: str, style: dict | None = None, width: int | str | None = None):
 def is_url(url: str) -> bool:
     """Check if `url` looks like a URL."""
     return url.startswith("http")
+
+
+def audio(url: str, style: dict | None = None):
+    """Embed a local audio file or an HTTP(S) audio URL."""
+    if not url.startswith(("http://", "https://")) and not os.path.isfile(url):
+        raise ValueError(f"Audio not found: {url}")
+    _current_renderings.append(Rendering(type="audio", data=url, style=style))
 
 
 def link(arg: type | Reference | str | None = None, style: dict | None = None, **kwargs):

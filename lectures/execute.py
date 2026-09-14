@@ -110,8 +110,6 @@ def execute(module_name: str, inspect_all_variables: bool) -> Trace:
     real_stderr = sys.stderr
     stdout_buffer = io.StringIO()
     stderr_buffer = io.StringIO()
-    #sys.stdout = stdout_buffer
-    #sys.stderr = stderr_buffer
 
     # Figure out which files we're actually tracing
     visible_paths = []
@@ -215,7 +213,7 @@ def execute(module_name: str, inspect_all_variables: bool) -> Trace:
                 if var in locals:
                     close_step.env[var] = to_serializable_value(locals[var])
                 else:
-                    print(f"WARNING: variable {var} not found in locals")
+                    print(f"WARNING: variable {var} not found in locals", file=real_stdout)
                 print(f"    env: {var} = {close_step.env.get(var)}", file=real_stdout)
         
             # Capture stdout and stderr
@@ -238,13 +236,15 @@ def execute(module_name: str, inspect_all_variables: bool) -> Trace:
     # Run the module
     module = importlib.import_module(module_name)
     visible_paths.append(inspect.getfile(module))
-    sys.settrace(trace_func)
-    module.main()
-    sys.settrace(None)
-
-    # Restore stdout and stderr
-    sys.stdout = real_stdout
-    sys.stderr = real_stderr
+    try:
+        sys.stdout = stdout_buffer
+        sys.stderr = stderr_buffer
+        sys.settrace(trace_func)
+        module.main()
+    finally:
+        sys.settrace(None)
+        sys.stdout = real_stdout
+        sys.stderr = real_stderr
 
     files = {relativize(path): open(path).read() for path in visible_paths}
     trace = Trace(steps=steps, files=files)
