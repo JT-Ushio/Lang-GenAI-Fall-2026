@@ -6,6 +6,8 @@
 
 第二讲：`cd lectures && python3 execute.py -m lecture_02`，浏览 `?trace=var/traces/lecture_02.json`。包含灰度图、RGB、音频采样率试听、视频帧与音轨、点云与网格，以及图文、语音文本、视频文本、点云文本协同任务；见 [第二讲备课说明](lectures/notes/lecture_02.md)。素材已经包含在仓库中，常规编译无需重新生成。
 
+第三讲：`cd lectures && python3 execute.py -m lecture_03`，浏览 `?trace=var/traces/lecture_03.json`。围绕 CLIP，先讲文本 RNN→Transformer、图像 CNN→ViT，再讲对比学习、检索与零样本分类；见 [第三讲备课说明](lectures/notes/lecture_03.md)。
+
 课件框架复用 [2026 春季《自然语言处理与语言习得》](https://github.com/JT-Ushio/nlp-and-la-spring-2026) 的 Python 执行轨迹生成器和 React Trace Viewer，保留 Markdown、公式、图片、链接、代码与变量展示、逐步浏览等功能。
 
 ## 安装与运行
