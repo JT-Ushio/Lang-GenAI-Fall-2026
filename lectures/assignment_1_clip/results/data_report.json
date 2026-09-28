@@ -1,0 +1,72 @@
+{
+  "archives": {
+    "flickr30k-images.zip": {
+      "bytes": 4390240817
+    },
+    "multi30k_test2017_task1.zip": {
+      "bytes": 89688932
+    }
+  },
+  "splits": {
+    "train": {
+      "images": 29000,
+      "languages": [
+        "en",
+        "de",
+        "fr",
+        "cs"
+      ],
+      "pairs": 116000
+    },
+    "val": {
+      "images": 1014,
+      "languages": [
+        "en",
+        "de",
+        "fr",
+        "cs"
+      ],
+      "pairs": 4056
+    },
+    "test_2016_flickr": {
+      "images": 1000,
+      "languages": [
+        "en",
+        "de",
+        "fr",
+        "cs"
+      ],
+      "pairs": 4000
+    },
+    "test_2017_flickr": {
+      "images": 1000,
+      "languages": [
+        "en",
+        "de",
+        "fr"
+      ],
+      "pairs": 3000
+    },
+    "test_2017_mscoco": {
+      "images": 461,
+      "languages": [
+        "en",
+        "de",
+        "fr"
+      ],
+      "pairs": 1383
+    }
+  },
+  "overlaps": {
+    "train/val": 0,
+    "train/test_2016_flickr": 0,
+    "train/test_2017_flickr": 0,
+    "train/test_2017_mscoco": 0,
+    "val/test_2016_flickr": 0,
+    "val/test_2017_flickr": 0,
+    "val/test_2017_mscoco": 0,
+    "test_2016_flickr/test_2017_flickr": 0,
+    "test_2016_flickr/test_2017_mscoco": 0,
+    "test_2017_flickr/test_2017_mscoco": 0
+  }
+}

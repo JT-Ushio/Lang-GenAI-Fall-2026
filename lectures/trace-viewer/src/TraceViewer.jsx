@@ -793,6 +793,13 @@ function renderAuthors(authors) {
 function renderRendering(rendering, navigate, playbackKey) {
   if (rendering.type === "markdown") {
     return <MarkdownRenderer content={rendering.data.toString()} style={rendering.style} />;
+  } else if (rendering.type === "interactive") {
+    return <span style={{ display: 'inline-block', width: '100%' }}>
+      <a href={rendering.data} target="_blank" rel="noreferrer">在独立窗口打开交互图</a>
+      <iframe src={rendering.data} title="课程交互可视化" loading="lazy"
+        sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
+        style={{ display: 'block', border: '1px solid #d5e1eb', borderRadius: 12, ...rendering.style }} />
+    </span>;
   } else if (rendering.type === "image") {
     return <img src={rendering.data} style={rendering.style} />;
   } else if (rendering.type === "video") {

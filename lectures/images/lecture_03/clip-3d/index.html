@@ -1,0 +1,68 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>CLIP · 3D 结构实验室</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f1f5fa;color:#192e43;font:15px system-ui,sans-serif}main{max-width:1200px;margin:auto;padding:20px}h1{font-size:25px;margin:0 0 8px}p{line-height:1.65;margin:8px 0}button,select{font:inherit;border:1px solid #bacbda;border-radius:8px;background:white;color:#243c55;padding:8px 12px;cursor:pointer}button.active{background:#203f60;color:white}.bar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}canvas{width:100%;height:370px;display:block;touch-action:none;cursor:grab;background:radial-gradient(ellipse at center,#fff,#e8f0f7);border-radius:12px}section{background:white;border:1px solid #d5e1eb;border-radius:12px;padding:14px;margin-top:12px}.muted{color:#52697f;font-size:13px}.legend{display:flex;gap:18px;flex-wrap:wrap}.dot{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px}.controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap}input{accent-color:#247b79}#detail{min-height:88px}#detail h2{font-size:19px;margin:0}#loss{display:none}table{border-collapse:collapse;width:100%;max-width:600px;margin:12px 0}td,th{padding:9px;text-align:center;border:1px solid #d8e1e8}td.positive{outline:2px solid #238b7d;outline-offset:-3px}.stats{font-size:20px;color:#126b68;font-weight:650}a{color:#225f99}@media(max-width:600px){main{padding:12px}canvas{height:320px}h1{font-size:21px}}
+</style><main>
+<h1>CLIP · 两条编码路线，一个学习目标</h1>
+<p class="muted">以原始 CLIP 的 ViT-B/32 配置为例。立体块表示计算模块或张量，尺寸不按参数量绘制。</p>
+<nav class="bar" id="tabs"><button data-view="joint" class="active">① 双分支连通</button><button data-view="text">② 文本编码器</button><button data-view="image">③ 图像编码器</button><button data-view="loss">④ 对比学习目标</button></nav>
+<div class="legend"><span><i class="dot" style="background:#9d83c9"></i>文本</span><span><i class="dot" style="background:#51a99a"></i>图像</span><span><i class="dot" style="background:#edb05e"></i>匹配与监督</span></div>
+<div class="bar controls"><button id="reset">重置视角</button><label>缩放 <input id="zoom" type="range" min="0.65" max="1.4" step="0.05" value="1"></label><label id="gradientLabel"><input id="gradient" type="checkbox"> 显示损失回传路径</label></div>
+<canvas id="scene" aria-label="可拖动旋转的 CLIP 三维结构图"></canvas>
+<p class="muted">拖动旋转 · 点击模块查看说明 · 也可通过下方列表逐层选择。箭头表示计算方向，不是词元间的注意力权重。</p>
+<div class="controls" id="selector"><button id="previous">上一步</button><select id="nodes" aria-label="选择计算模块"></select><button id="next">下一步</button></div>
+<section id="detail" aria-live="polite"></section>
+<section id="loss"><h2 style="margin:0;font-size:20px">监督信号来自“哪张图与哪段话配对”</h2>
+<p>三对样本：猫、鱼、车。柱高表示归一化向量的点积（带固定底座），表格显示 softmax 后的匹配概率。</p>
+<div class="controls"><label>示意对齐程度 <input id="alignment" type="range" min="0" max="1" step=".01" value=".65"></label><label>温度 τ <input id="temperature" type="range" min=".05" max="1" step=".05" value=".2"></label><select id="direction" aria-label="概率方向"><option value="row">图 → 文：逐行归一化</option><option value="column">文 → 图：逐列归一化</option></select><label><input id="wrong" type="checkbox"> 错配训练标签</label></div>
+<div id="matrix"></div><p class="stats" id="metrics"></p>
+<p><b>分数：</b>sᵢⱼ = uᵢ · vⱼ / τ。<b>目标：</b>图→文交叉熵与文→图交叉熵的平均值。</p>
+<p class="muted">滑块直接改变三维合成向量，并实时重算概率和损失；不是运行真实 CLIP 训练。绿色边框标出监督指定的正例。降低温度会放大分数差异，也会加重高置信度错配的惩罚。</p></section>
+<p class="muted">原始 CLIP 还包含 ResNet 图像分支；不同 CLIP 系列的层数、维度与汇总方式可能不同。本图不把双分支画成跨模态交叉注意力。</p>
+<p class="muted">资料：<a href="https://github.com/openai/CLIP/blob/main/clip/model.py" target="_blank" rel="noreferrer">官方模型代码</a> · <a href="https://proceedings.mlr.press/v139/radford21a.html" target="_blank" rel="noreferrer">CLIP 原论文</a></p>
+</main><script>
+const $=id=>document.getElementById(id), canvas=$('scene'),ctx=canvas.getContext('2d');
+const C={text:'#9d83c9',image:'#51a99a',joint:'#edb05e'};
+// The short labels remain outside the projected solids for readability.
+const datasets={
+joint:[
+['图像输入',-340,-100,0,'image','N 张 RGB 图片，分别送入同一个图像编码器。批次中的配对顺序是监督标签的来源。'],
+['ViT 编码器',-120,-100,0,'image','图像块与 CLS 经过视觉 Transformer。每张图片得到一个整体表示。'],
+['图像向量 U',100,-100,0,'image','取 CLS，经过层归一化、线性投影和 L2 归一化。ViT-B/32 的共同空间维度为 512。'],
+['文本输入',-340,110,0,'text','N 段对应描述，分词后加入起止标记。两个分支分别处理自己的输入。'],
+['文本编码器',-120,110,0,'text','带因果掩码的 Transformer 将文字编码为上下文化表示。结束标记位置可利用此前的输入。'],
+['文字向量 V',100,110,0,'text','取 EOT（文本结束标记）位置，投影并 L2 归一化，得到每段文字的 512 维向量。'],
+['N × N 分数',320,0,0,'joint','两两点积，再乘可学习的 exp(logit_scale)。两分支在这里通过分数和损失联系起来；编码器之间没有逐词元交叉注意力。'],
+['双向交叉熵',530,0,0,'joint','正确配对的行列索引就是标签。行方向找描述，列方向找图片；两个损失取平均，梯度更新两条分支、投影与分数缩放参数。']],
+text:[
+['词元＋位置',-430,0,0,'text','BPE 子词编号 → 词元嵌入＋可学习位置嵌入。输入最多 77 个位置（含特殊标记与填充），宽度为 512。'],
+['LayerNorm',-255,0,0,'text','层归一化：在每个词元内部调整特征尺度。这里展开的是一个 pre-LN Transformer 块。'],
+['因果多头注意力',-80,0,0,'text','8 个注意力头；每个位置只能关注自己和此前位置。Q、K、V 都来自当前文本表示。输出加回输入，形成第一条残差连接。'],
+['LN＋前馈网络',95,0,0,'text','第二次层归一化 → 512→2048→512 的前馈网络（QuickGELU）→ 加回输入。前馈网络逐位置计算，注意力负责位置间交互。'],
+['堆叠 12 个块',270,0,0,'text','上述注意力与前馈结构重复 12 层，各层有自己的参数；残差连接帮助信息和梯度传播。'],
+['EOT＋投影',445,0,0,'text','最后 LayerNorm 后取 EOT 位置；512→512 投影，再 L2 归一化。得到整段文字向量，不是在这里生成下一个词。']],
+image:[
+['224 × 224 RGB',-430,0,0,'image','三通道图像按 32×32 分块，7×7=49 个块。张量常写为 [批次,3,224,224]。'],
+['块投影',-255,0,0,'image','每块含 32×32×3 个数，投影到 768 维。官方实现用核大小和步幅均为 32 的卷积，完成不重叠切块和共享投影。'],
+['CLS＋位置＋LN',-80,0,0,'image','49 个块前加入一个可学习 CLS（汇总词元），共 50 个位置；加位置向量，然后进入前置 LayerNorm。'],
+['全局自注意力',95,0,0,'image','每层 12 个注意力头；图像块与 CLS 可相互参考，无文本式因果掩码。每层还包括层归一化、前馈网络和两条残差连接。'],
+['堆叠 12 个块',270,0,0,'image','12 层 Transformer，宽度 768，前馈隐藏维度 3072。前一层的全部位置表示传给后一层。'],
+['CLS＋投影',445,0,0,'image','取 CLS，做末端 LayerNorm；768→512 投影，再 L2 归一化。图像和文本内部宽度可不同，最终必须进入同一比较空间。']]};
+let view='joint',selected=0,yaw=-.16,pitch=.38,zoom=1,hits=[],drag=null,W=0,H=0;
+function project(x,y,z){const X=x*Math.cos(yaw)+z*Math.sin(yaw),Z=-x*Math.sin(yaw)+z*Math.cos(yaw),Y=y*Math.cos(pitch)-Z*Math.sin(pitch),D=y*Math.sin(pitch)+Z*Math.cos(pitch);const s=Math.min(W/1280,H/570)*zoom*1100/(1100+D);return [W/2+X*s,H/2+Y*s,D];}
+function line(a,b,color,dashed=false){const p=project(...a),q=project(...b);ctx.strokeStyle=color;ctx.lineWidth=2;ctx.setLineDash(dashed?[6,5]:[]);ctx.beginPath();ctx.moveTo(...p.slice(0,2));ctx.lineTo(...q.slice(0,2));ctx.stroke();ctx.setLineDash([]);let t=Math.atan2(q[1]-p[1],q[0]-p[0]);ctx.beginPath();ctx.moveTo(q[0],q[1]);ctx.lineTo(q[0]-9*Math.cos(t-.4),q[1]-9*Math.sin(t-.4));ctx.lineTo(q[0]-9*Math.cos(t+.4),q[1]-9*Math.sin(t+.4));ctx.fillStyle=color;ctx.fill();}
+function cube(x,y,z,w,h,d,color,label,index){const pts=[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]].map(([a,b,c])=>project(x+a*w/2,y+b*h/2,z+c*d/2));const faces=[[0,1,2,3],[4,5,6,7],[0,1,5,4],[2,3,7,6],[1,2,6,5],[0,3,7,4]];faces.sort((a,b)=>b.reduce((v,i)=>v+pts[i][2],0)-a.reduce((v,i)=>v+pts[i][2],0));faces.forEach((f,k)=>{ctx.beginPath();f.forEach((n,i)=>i?ctx.lineTo(pts[n][0],pts[n][1]):ctx.moveTo(pts[n][0],pts[n][1]));ctx.closePath();ctx.fillStyle=color;ctx.fill();ctx.fillStyle=`rgba(255,255,255,${k*.035})`;ctx.fill();ctx.strokeStyle=index===selected&&view!=='loss'?'#173d65':'#ffffffaa';ctx.lineWidth=index===selected?2.5:1;ctx.stroke();});const p=project(x,y,z);if(label){ctx.font='600 13px system-ui';ctx.textAlign='center';ctx.fillStyle='#193752';ctx.fillText(label,p[0],Math.max(...pts.map(p=>p[1]))+18);}if(index!==null)hits.push({index,x:p[0],y:p[1],r:Math.max(26,Math.abs(pts[0][0]-pts[1][0])/2)});}
+function draw(){const r=canvas.getBoundingClientRect();W=r.width;H=r.height;const d=devicePixelRatio||1;canvas.width=W*d;canvas.height=H*d;ctx.scale(d,d);hits=[];
+if(view==='loss'){const m=compute().sim;for(let i=0;i<3;i++)for(let j=0;j<3;j++){const height=25+160*m[i][j];cube((j-1)*210,(i-1)*135,-height/2,100,80,height,i===j?'#51a99a':'#c3ccdc',`${['猫','鱼','车'][i]}图 / ${['猫','鱼','车'][j]}文`,null);}return;}
+const data=datasets[view];const edges=view==='joint'?[[0,1],[1,2],[3,4],[4,5],[2,6],[5,6],[6,7]]:data.slice(1).map((_,i)=>[i,i+1]);edges.forEach(([i,j])=>{const a=data[i].slice(1,4),b=data[j].slice(1,4),v=b.map((x,k)=>x-a[k]),n=Math.hypot(...v);line(a.map((x,k)=>x+v[k]*70/n),b.map((x,k)=>x-v[k]*70/n),'#7793aa')});
+if(view==='joint'&&$('gradient').checked){[[7,6],[6,2],[2,1],[6,5],[5,4]].forEach(([i,j])=>{let a=data[i].slice(1,4),b=data[j].slice(1,4);a[2]=-100;b[2]=-100;line(a,b,'#b65a48',true);});}
+data.map((n,i)=>({n,i,depth:project(...n.slice(1,4))[2]})).sort((a,b)=>b.depth-a.depth).forEach(({n,i})=>{const stacked=n[0].includes('12')||n[0].includes('编码器');if(stacked)for(let k=3;k>0;k--)cube(n[1],n[2],k*17,110,70,12,C[n[4]],'',null);cube(n[1],n[2],0,110,70,24,C[n[4]],n[0],i);});}
+function detail(){if(view==='loss')return;const n=datasets[view][selected];$('nodes').value=selected;$('detail').innerHTML=`<h2>${selected+1}. ${n[0]}</h2><p>${n[5]}</p>`;draw();}
+function change(v){view=v;selected=0;document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));$('loss').style.display=v==='loss'?'block':'none';$('selector').style.display=$('detail').style.display=v==='loss'?'none':'';$('gradientLabel').style.display=v==='joint'?'':'none';$('nodes').replaceChildren();if(v!=='loss')datasets[v].forEach((n,i)=>$('nodes').add(new Option(`${i+1}. ${n[0]}`,i)));yaw=v==='loss'?-.45:-.16;pitch=v==='loss'?.65:.38;if(v!=='loss')detail();else updateLoss();draw();}
+function softmax(a){let m=Math.max(...a),v=a.map(x=>Math.exp(x-m)),s=v.reduce((a,b)=>a+b,0);return v.map(x=>x/s);}
+function compute(){const a=+$('alignment').value,t=+$('temperature').value;const u=[[1,0,0],[0,1,0],[0,0,1]],v=u.map((r,i)=>r.map((x,j)=>a*x+(1-a)*(j===(i+1)%3?1:.15))).map(r=>{let n=Math.hypot(...r);return r.map(x=>x/n)});const sim=u.map(r=>v.map(s=>r.reduce((z,x,k)=>z+x*s[k],0))),logits=sim.map(r=>r.map(x=>x/t)),row=logits.map(softmax),col=[0,1,2].map(j=>softmax(logits.map(r=>r[j])));const target=[0,1,2].map(i=>$('wrong').checked?(i+1)%3:i);let lr=0,lc=0;for(let i=0;i<3;i++){lr-=Math.log(row[i][target[i]])/3;lc-=Math.log(col[target[i]][i])/3;}return {sim,row,col,target,lr,lc};}
+function updateLoss(){const m=compute(),r=$('direction').value==='row',names=['猫','鱼','车'];$('matrix').innerHTML='<table><tr><th>图像 ↓ / 文字 →</th>'+names.map(n=>`<th>${n}</th>`).join('')+'</tr>'+names.map((n,i)=>'<tr><th>'+n+'</th>'+names.map((_,j)=>{let p=r?m.row[i][j]:m.col[j][i];return `<td class="${m.target[i]===j?'positive':''}" style="background:rgba(81,169,154,${p*.6})">${p.toFixed(3)}</td>`}).join('')+'</tr>').join('')+'</table>';$('metrics').textContent=`τ = ${Number($('temperature').value).toFixed(2)} · 图→文损失 ${m.lr.toFixed(3)} · 文→图损失 ${m.lc.toFixed(3)} · 平均 ${((m.lr+m.lc)/2).toFixed(3)}`;draw();}
+$('tabs').onclick=e=>{if(e.target.dataset.view)change(e.target.dataset.view)};$('nodes').onchange=e=>{selected=+e.target.value;detail()};$('previous').onclick=()=>{selected=Math.max(0,selected-1);detail()};$('next').onclick=()=>{selected=Math.min(datasets[view].length-1,selected+1);detail()};$('zoom').oninput=e=>{zoom=+e.target.value;draw()};$('gradient').onchange=draw;$('reset').onclick=()=>{zoom=1;$('zoom').value=1;yaw=view==='loss'?-.45:-.16;pitch=view==='loss'?.65:.38;draw()};['alignment','temperature','direction','wrong'].forEach(id=>$(id).oninput=updateLoss);
+canvas.onpointerdown=e=>{drag={x:e.clientX,y:e.clientY,ox:e.clientX,oy:e.clientY};canvas.setPointerCapture(e.pointerId)};canvas.onpointermove=e=>{if(!drag)return;yaw+=(e.clientX-drag.x)*.006;pitch=Math.max(-1.1,Math.min(1.1,pitch+(e.clientY-drag.y)*.006));drag.x=e.clientX;drag.y=e.clientY;draw()};canvas.onpointerup=e=>{if(drag&&Math.hypot(e.clientX-drag.ox,e.clientY-drag.oy)<5){const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,h=hits.slice().reverse().find(h=>Math.hypot(h.x-x,h.y-y)<h.r);if(h){selected=h.index;detail()}}drag=null};canvas.onpointercancel=()=>drag=null;new ResizeObserver(draw).observe(canvas);
+const initialView = location.hash.slice(1);
+change(['joint','text','image','loss'].includes(initialView) ? initialView : 'joint');
+</script></html>

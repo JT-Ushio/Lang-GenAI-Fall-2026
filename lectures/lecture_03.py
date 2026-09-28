@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from torch import nn
 from torch.nn import functional as F
-from execute_util import image, link, text
+from execute_util import image, interactive, link, text
 
 
 def main():
@@ -212,6 +212,9 @@ def clip_architecture():
     text("图像 ViT 分支使用图像块与可学习汇总位置；经过视觉编码后，把汇总向量投影到共同空间。CNN 版本则使用不同的视觉汇总实现。")
     text("两分支独立编码，可以分别预计算。原始 CLIP 没有让每个文字词元与每个图像块通过交叉注意力逐一交流；全局对齐不自动等于精确定位。")
     text("语言学类比：图像与描述像两种表达方式，模型学习哪些表达相互对应。但文本通常只说出画面的一部分，因此不是严格逐项翻译。")
+    text("### 3D 演示 · 沿两条分支走到共同空间")
+    text("先查看文本分支的词元、因果注意力与 EOT，再查看图像分支的切块、CLS 与 ViT；最后切回双分支总览，定位投影、归一化和相似度矩阵。可拖动旋转，点击模块阅读说明。")
+    interactive("images/lecture_03/clip-3d/index.html", height=900)
     link(title="CLIP 原论文（ICML 2021）", url="https://proceedings.mlr.press/v139/radford21a.html")
     link(title="原始实现：文本编码、图像编码与相似度", url="https://github.com/openai/CLIP/blob/main/clip/model.py")
 
@@ -227,6 +230,9 @@ def clip_training():
     text(r"设归一化图像向量为 $u_i$、文字向量为 $v_j$，分数为 $s_{ij}=u_i^\top v_j/\tau$。$\tau$ 是温度，控制分数分布的尖锐程度。")
     text(r"图像到文字的损失：$L_{I\to T}=-\frac{1}{N}\sum_i\log\frac{\exp(s_{ii})}{\sum_j\exp(s_{ij})}$。文字到图像交换行列，最后取两者平均。")
     text("**交叉熵损失（cross-entropy loss）**：在这里惩罚『正确配对分到的概率太低』。直观目标是提高正确项相对其他候选的分数。")
+    text("### 3D 演示 · 配对关系怎样变成监督信号")
+    text("先提高合成向量的对齐程度，观察正确配对的概率和损失；再保持向量不变，勾选错配标签。最后调整温度，比较图→文与文→图两个方向。滑块用于数值演示，不代表真实模型训练。")
+    interactive("images/lecture_03/clip-3d/index.html", height=1100, fragment="loss")
     text("### 小型数值演示：归一化、相似度与双向损失")
     text("下面人为给定三对向量；对角线对应配对编号。这不是已经训练好的 CLIP，数值仅演示其核心匹配计算。")
     image_vectors = np.array([[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]])

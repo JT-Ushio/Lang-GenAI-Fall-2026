@@ -73,6 +73,16 @@ def image(url: str, style: dict | None = None, width: int | str | None = None):
     _current_renderings.append(Rendering(type="image", data=path, style=style))
 
 
+def interactive(path: str, height: int = 850, fragment: str = ""):
+    """Embed a local interactive HTML teaching diagram."""
+    if not os.path.isfile(path) or not path.endswith(".html"):
+        raise ValueError(f"Interactive HTML not found: {path}")
+    _current_renderings.append(Rendering(
+        type="interactive", data=path + ("#" + fragment if fragment else ""),
+        style={"width": 760, "maxWidth": "100%", "height": height},
+    ))
+
+
 def video(url: str, style: dict | None = None, width: int | str | None = None):
     """Embed local video, HTTP(S) media, or a Bilibili BV video page."""
     if not url.startswith(("http://", "https://")) and not os.path.isfile(url):

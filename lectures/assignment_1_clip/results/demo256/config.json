@@ -1,0 +1,15 @@
+{
+  "root": "/home/taoji/data/clip-multi30k",
+  "train_limit": 256,
+  "eval_limit": 256,
+  "epochs": 4,
+  "batch_size": 32,
+  "lr": 1e-05,
+  "seed": 42,
+  "output": "runs/demo256",
+  "gpu": "NVIDIA GeForce RTX 3090",
+  "torch": "2.11.0+cu128",
+  "precision": "bfloat16",
+  "training": "both encoders and projections",
+  "max_length": 64
+}
