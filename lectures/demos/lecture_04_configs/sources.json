@@ -1,0 +1,29 @@
+{
+  "checked_at": "2026-10-12",
+  "models": [
+    {
+      "repository": "liuhaotian/llava-v1.5-7b",
+      "revision": "4481d270cc22fd5c4d1bb5df129622006ccd9234",
+      "files": [
+        {
+          "local": "llava_15_7b_config.json",
+          "url": "https://huggingface.co/liuhaotian/llava-v1.5-7b/resolve/4481d270cc22fd5c4d1bb5df129622006ccd9234/config.json"
+        }
+      ]
+    },
+    {
+      "repository": "openai/clip-vit-large-patch14-336",
+      "revision": "ce19dc912ca5cd21c8a653c79e251e808ccabcd1",
+      "files": [
+        {
+          "local": "clip_l14_336_config.json",
+          "url": "https://huggingface.co/openai/clip-vit-large-patch14-336/resolve/ce19dc912ca5cd21c8a653c79e251e808ccabcd1/config.json"
+        },
+        {
+          "local": "clip_l14_336_preprocessor_config.json",
+          "url": "https://huggingface.co/openai/clip-vit-large-patch14-336/resolve/ce19dc912ca5cd21c8a653c79e251e808ccabcd1/preprocessor_config.json"
+        }
+      ]
+    }
+  ]
+}

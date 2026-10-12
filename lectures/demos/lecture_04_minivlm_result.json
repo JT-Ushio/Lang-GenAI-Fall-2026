@@ -1,0 +1,120 @@
+{
+  "training_examples": 8,
+  "updates": 180,
+  "parameters": 21431,
+  "history": [
+    {
+      "step": 0,
+      "loss": 2.073059
+    },
+    {
+      "step": 1,
+      "loss": 1.240635
+    },
+    {
+      "step": 10,
+      "loss": 0.208344
+    },
+    {
+      "step": 30,
+      "loss": 0.008423
+    },
+    {
+      "step": 60,
+      "loss": 0.002522
+    },
+    {
+      "step": 120,
+      "loss": 0.001166
+    },
+    {
+      "step": 180,
+      "loss": 0.000697
+    }
+  ],
+  "training_exact_match": "8/8",
+  "causal_future_token_delta": 0.0,
+  "answers": [
+    {
+      "left": "red",
+      "right": "red",
+      "question": "left?",
+      "expected": "red",
+      "generated": [
+        "red",
+        "<eos>"
+      ]
+    },
+    {
+      "left": "red",
+      "right": "red",
+      "question": "right?",
+      "expected": "red",
+      "generated": [
+        "red",
+        "<eos>"
+      ]
+    },
+    {
+      "left": "red",
+      "right": "blue",
+      "question": "left?",
+      "expected": "red",
+      "generated": [
+        "red",
+        "<eos>"
+      ]
+    },
+    {
+      "left": "red",
+      "right": "blue",
+      "question": "right?",
+      "expected": "blue",
+      "generated": [
+        "blue",
+        "<eos>"
+      ]
+    },
+    {
+      "left": "blue",
+      "right": "red",
+      "question": "left?",
+      "expected": "blue",
+      "generated": [
+        "blue",
+        "<eos>"
+      ]
+    },
+    {
+      "left": "blue",
+      "right": "red",
+      "question": "right?",
+      "expected": "red",
+      "generated": [
+        "red",
+        "<eos>"
+      ]
+    },
+    {
+      "left": "blue",
+      "right": "blue",
+      "question": "left?",
+      "expected": "blue",
+      "generated": [
+        "blue",
+        "<eos>"
+      ]
+    },
+    {
+      "left": "blue",
+      "right": "blue",
+      "question": "right?",
+      "expected": "blue",
+      "generated": [
+        "blue",
+        "<eos>"
+      ]
+    }
+  ],
+  "scope": "All examples were used in training; no generalization claim."
+}

@@ -1,0 +1,130 @@
+{
+  "scope": "synthetic image preprocessing; no VLM weights/inference",
+  "cases": {
+    "wide": {
+      "original_wh": [
+        600,
+        300
+      ],
+      "processed_wh": [
+        336,
+        336
+      ],
+      "chw": [
+        3,
+        336,
+        336
+      ],
+      "reconstruction_error": 7.77079128821967e-08
+    },
+    "document": {
+      "original_wh": [
+        300,
+        600
+      ],
+      "processed_wh": [
+        336,
+        336
+      ],
+      "chw": [
+        3,
+        336,
+        336
+      ],
+      "reconstruction_error": 7.77079128821967e-08
+    }
+  },
+  "shapes": {
+    "pixels": [
+      1,
+      3,
+      336,
+      336
+    ],
+    "patch_grid": [
+      1,
+      1024,
+      24,
+      24
+    ],
+    "patch_sequence": [
+      1,
+      576,
+      1024
+    ],
+    "with_cls": [
+      1,
+      577,
+      1024
+    ],
+    "selected_layer": [
+      1,
+      577,
+      1024
+    ],
+    "drop_cls": [
+      1,
+      576,
+      1024
+    ],
+    "projected": [
+      1,
+      576,
+      4096
+    ],
+    "raw_input_ids": [
+      1,
+      21
+    ],
+    "text_prefix": [
+      1,
+      3,
+      4096
+    ],
+    "text_suffix": [
+      1,
+      17,
+      4096
+    ],
+    "combined": [
+      1,
+      596,
+      4096
+    ],
+    "lm_hidden": [
+      1,
+      596,
+      4096
+    ],
+    "logits": [
+      1,
+      596,
+      32000
+    ],
+    "generation_last_logits": [
+      1,
+      1,
+      32000
+    ]
+  },
+  "crop_check": {
+    "red_pixels_after_center_crop": 0,
+    "red_pixels_after_pad": 3725
+  },
+  "channels": {
+    "gray_rgb": [
+      128,
+      128,
+      128
+    ],
+    "transparent_over_white": [
+      255,
+      255,
+      255
+    ],
+    "exif_corrected_wh": [
+      80,
+      160
+    ]
+  }
+}

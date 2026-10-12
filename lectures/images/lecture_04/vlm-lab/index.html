@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VLM 交互实验台 · 第四讲</title>
+  <style>
+    :root { color-scheme: light; --ink:#17334a; --teal:#307f82; --muted:#526b7e; }
+    * { box-sizing:border-box; }
+    body { margin:0; font:16px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; color:var(--ink); background:#f5f9fc; }
+    main { max-width:1000px; margin:auto; padding:20px; }
+    h1 { font-size:24px; margin:0 0 4px; }
+    h2 { font-size:19px; margin:10px 0; }
+    p { margin:6px 0 12px; }
+    .muted { color:var(--muted); font-size:14px; }
+    nav, .controls { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0; align-items:center; }
+    button, select { font:inherit; color:var(--ink); border:1px solid #a7bdcc; border-radius:9px; background:white; padding:7px 12px; cursor:pointer; }
+    button[aria-selected="true"],button.active { background:var(--teal); color:white; border-color:var(--teal); }
+    button:focus-visible,select:focus-visible { outline:3px solid #edab56; outline-offset:2px; }
+    [hidden] { display:none !important; }
+    .card { background:white; border:1px solid #d9e4ec; border-radius:12px; padding:14px; margin:12px 0; }
+    .scene-row { display:grid; grid-template-columns:180px 1fr; gap:16px; align-items:center; }
+    .scene { height:100px; width:176px; display:grid; grid-template-columns:1fr 1fr; border:3px solid white; border-radius:8px; overflow:hidden; box-shadow:0 2px 9px #17334a1a; }
+    .red { background:#e95f59; } .blue { background:#358ac8; }
+    .patch { display:grid; place-items:center; color:white; text-shadow:0 1px 2px #0004; font-weight:600; }
+    .chain { display:grid; grid-template-columns:repeat(5,1fr); gap:7px; margin:16px 0; }
+    .chain button { font-size:15px; min-height:90px; padding:9px 6px; }
+    .chain small { display:block; margin-top:6px; }
+    .vector-row { display:flex; gap:7px; flex-wrap:wrap; padding:10px 0; }
+    .token { border:1px solid #a5bac9; border-radius:7px; padding:7px 12px; background:#eaf1fa; }
+    .token.visual { background:#e2f1f0; }
+    .token.answer { background:#fff0da; }
+    .token.ignore { background:#e9eef3; color:#526b7e; }
+    .detail { min-height:112px; }
+    .grid-wrap { overflow:auto; padding-bottom:3px; }
+    table { width:100%; border-collapse:separate; border-spacing:5px; text-align:center; font-size:15px; }
+    th { font-weight:500; min-width:52px; }
+    td { border-radius:6px; background:#e8edf3; height:31px; }
+    td.open { background:#c8e7de; }
+    td.focus { outline:2px solid #307f82; }
+    td.leak { background:#ffd1c5; }
+    th button { border:0; padding:4px 8px; white-space:nowrap; }
+    .badge { display:inline-block; background:#e2f1f0; border-radius:8px; padding:4px 10px; }
+    .labels { display:grid; grid-template-columns:repeat(6,1fr); gap:7px; }
+    .labels .token { text-align:center; padding:10px 3px; font-size:15px; }
+    .labels small { display:block; color:var(--muted); font-size:13px; }
+    footer { margin-top:16px; border-top:1px solid #d7e4ec; padding-top:10px; }
+    @media (max-width:560px) { main{padding:12px}.chain{grid-template-columns:repeat(3,1fr)}.scene-row{grid-template-columns:1fr}.labels{gap:4px}.labels .token{font-size:13px} }
+  </style>
+</head>
+<body>
+<main>
+  <h1>VLM 交互实验台</h1>
+  <p class="muted">操作查看信息流、可见范围和监督位置。流程答案按教学规则预设；真实模型训练结果见课件中的 Python 演示。</p>
+  <nav role="tablist" aria-label="实验视图">
+    <button id="tab-flow" role="tab" aria-controls="flow">① 视觉与语言连接</button>
+    <button id="tab-mask" role="tab" aria-controls="mask">② 因果掩码</button>
+    <button id="tab-loss" role="tab" aria-controls="loss">③ 答案区监督</button>
+  </nav>
+  <section id="flow" role="tabpanel" aria-labelledby="tab-flow">
+    <div class="controls">
+      <label>问题 <select id="question"><option value="left">left?（左边）</option><option value="right">right?（右边）</option></select></label>
+      <button id="swap">交换左右颜色</button>
+      <button id="next-stage">查看下一个模块 →</button>
+    </div>
+    <div class="card scene-row">
+      <div class="scene" aria-label="两个色块"><div id="left-patch" class="patch red">左 red</div><div id="right-patch" class="patch blue">右 blue</div></div>
+      <div><b id="flow-question">问题：left?</b><p id="flow-answer">教学标准答案：red &lt;eos&gt;</p><span class="badge">图像是条件，问题决定要回答什么</span></div>
+    </div>
+    <div class="chain" aria-label="点选模块">
+      <button data-stage="0">像素<small>[1,3,8,16]</small></button>
+      <button data-stage="1">切块嵌入<small>[1,2,16]</small></button>
+      <button data-stage="2">连接器<small>[1,2,32]</small></button>
+      <button data-stage="3">拼入文字<small>[1,4,32]</small></button>
+      <button data-stage="4">因果 Transformer<small>预测文字词元</small></button>
+    </div>
+    <div id="module-detail" class="card detail" aria-live="polite"></div>
+  </section>
+  <section id="mask" role="tabpanel" aria-labelledby="tab-mask" hidden>
+    <div class="controls"><label>查询位置 <select id="query-position"></select></label><button id="toggle-leak" aria-pressed="false">对照：允许偷看未来</button></div>
+    <p>每一行发起查询，每一列提供信息。<b>绿色 1</b> 表示允许读取，灰色 0 表示屏蔽。点击左侧位置查看对应一行。</p>
+    <div class="card grid-wrap"><table id="attention-grid" aria-label="因果注意力矩阵"></table></div>
+    <div id="mask-detail" class="card detail" aria-live="polite"></div>
+  </section>
+  <section id="loss" role="tabpanel" aria-labelledby="tab-loss" hidden>
+    <div class="controls"><label>监督方式 <select id="supervision"><option value="answer">仅答案（本课使用）</option><option value="all-text">问题与文字标记也计入（对照）</option></select></label></div>
+    <h2>输入位置与 labels 对齐</h2><div id="input-labels" class="labels"></div>
+    <h2>监督标签</h2><div id="target-labels" class="labels"></div>
+    <div id="loss-detail" class="card detail" aria-live="polite"></div>
+    <p class="muted">-100 是损失函数的忽略值，不是要输出的词元编号；它也不屏蔽注意力。实际多轮聊天须依据模板标记各个助手回答区间。</p>
+  </section>
+  <footer class="muted">对应微型模型：连续视觉特征＋前缀拼接＋因果注意力。无外部脚本、无模型下载，可离线查看。</footer>
+</main>
+<script>
+  const names = ['图像1','图像2','问题','BOS','red','EOS'];
+  let stage = 0, swapped = false, queryPosition = 3, leak = false;
+  const $ = id => document.getElementById(id);
+  const stages = [
+    ['像素输入','NCHW：批量、通道、高、宽。红色与蓝色来自实际像素通道；本例左右各一个 8×8 色块。'],
+    ['局部切块嵌入','一个共享的卷积处理两块像素，得到两个 16 维向量。它不是完整 ViT；真实视觉编码器还会进行上下文编码。'],
+    ['线性连接器','同一个 16→32 线性层变换两条视觉向量。位置数量仍是 2，向量维数改为语言模型使用的 32。'],
+    ['拼接序列','推理第一步：视觉1、视觉2、问题、BOS，共 4 个位置。加位置嵌入后，答案位置能够区分左右和前文顺序。'],
+    ['自回归解码','当前位置给出 7 个文字词元的分数。选出颜色词后，把它接回序列，再预测 EOS。这里展示标准答案流程，未执行网络推理。']
+  ];
+  function showTab(tab) {
+    if (!['flow','mask','loss'].includes(tab)) tab = 'flow';
+    for (const name of ['flow','mask','loss']) {
+      $(name).hidden = name !== tab;
+      $('tab-'+name).setAttribute('aria-selected', String(name === tab));
+    }
+  }
+  for (const tab of ['flow','mask','loss']) $('tab-'+tab).onclick = () => { location.hash=tab; showTab(tab); };
+  window.addEventListener('hashchange', () => showTab(location.hash.slice(1)));
+  function updateFlow() {
+    const left=swapped?'blue':'red', right=swapped?'red':'blue';
+    $('left-patch').className='patch '+left; $('left-patch').textContent='左 '+left;
+    $('right-patch').className='patch '+right; $('right-patch').textContent='右 '+right;
+    const question=$('question').value;
+    $('flow-question').textContent='问题：'+question+'?';
+    $('flow-answer').textContent='教学标准答案：'+(question==='left'?left:right)+' <eos>';
+    document.querySelectorAll('[data-stage]').forEach(btn=>btn.classList.toggle('active', Number(btn.dataset.stage)===stage));
+    $('module-detail').innerHTML='<b>'+stages[stage][0]+'</b><p>'+stages[stage][1]+'</p>';
+  }
+  document.querySelectorAll('[data-stage]').forEach(btn=>btn.onclick=()=>{stage=Number(btn.dataset.stage);updateFlow();});
+  $('question').onchange=updateFlow;
+  $('swap').onclick=()=>{swapped=!swapped;updateFlow();};
+  $('next-stage').onclick=()=>{stage=(stage+1)%stages.length;updateFlow();};
+  names.forEach((name,i)=>{const option=document.createElement('option');option.value=i;option.textContent=i+' · '+name;$('query-position').append(option);});
+  $('query-position').value=queryPosition;
+  function updateMask() {
+    let html='<thead><tr><th>Q ↓ / K →</th>'+names.map((n,i)=>'<th>'+i+'<br>'+n+'</th>').join('')+'</tr></thead><tbody>';
+    names.forEach((name,i)=>{
+      html+='<tr><th><button data-row="'+i+'" class="'+(i===queryPosition?'active':'')+'">'+i+' · '+name+'</button></th>';
+      names.forEach((_,j)=>{const open=j<=i;html+='<td class="'+(open?'open':leak?'leak':'')+(i===queryPosition?' focus':'')+'">'+(open||leak?'1':'0')+'</td>';});
+      html+='</tr>';
+    });
+    $('attention-grid').innerHTML=html+'</tbody>';
+    document.querySelectorAll('[data-row]').forEach(btn=>btn.onclick=()=>{queryPosition=Number(btn.dataset.row);$('query-position').value=queryPosition;updateMask();});
+    const visible=names.filter((_,i)=>leak||i<=queryPosition).join('、');
+    $('mask-detail').innerHTML='<b>位置 '+queryPosition+'（'+names[queryPosition]+'）能读取：'+visible+'</b><p>'+(leak?'红色格子额外开放未来内容。BOS 若读到后面的 red，就能从答案本身获得预测线索，训练结果会失真。':'例如位置 3（BOS）利用图像和问题预测下一词元 red；位置 4 再利用 red 预测 EOS。')+'</p>';
+    $('toggle-leak').setAttribute('aria-pressed',String(leak));
+    $('toggle-leak').textContent=leak?'恢复因果掩码':'对照：允许偷看未来';
+  }
+  $('query-position').onchange=()=>{queryPosition=Number($('query-position').value);updateMask();};
+  $('toggle-leak').onclick=()=>{leak=!leak;updateMask();};
+  function updateLoss() {
+    const all=$('supervision').value==='all-text';
+    $('input-labels').innerHTML=names.map((name,i)=>'<div class="token '+(i<2?'visual':i>=4?'answer':'')+'">'+name+'<small>位置 '+i+'</small></div>').join('');
+    $('target-labels').innerHTML=names.map((name,i)=>{const ignored=i<2||(!all&&i<4);return '<div class="token '+(ignored?'ignore':'answer')+'">'+(ignored?'-100':name)+'<small>'+(ignored?'不计损失':'监督目标')+'</small></div>';}).join('');
+    $('loss-detail').innerHTML=all?'<b>4 个文字目标：问题、BOS、red、EOS</b><p>对照中连问题与标记也参与预测。视觉位置仍没有文字标签。本课希望监督助手答案，所以将问题区设为 -100。</p>':'<b>2 个目标：red 与 EOS</b><p>预测位置 3 → 标签位置 4（red）；预测位置 4 → 标签位置 5（EOS）。代码：logits[:, :-1] 对齐 labels[:, 1:]。</p>';
+  }
+  $('supervision').onchange=updateLoss;
+  updateFlow();updateMask();updateLoss();showTab(location.hash.slice(1));
+</script>
+</body>
+</html>
