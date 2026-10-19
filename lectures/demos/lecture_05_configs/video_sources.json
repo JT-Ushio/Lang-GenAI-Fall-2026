@@ -1,0 +1,38 @@
+{
+  "checked_at": "2026-10-19",
+  "chinese": {
+    "url": "https://www.bilibili.com/video/BV1Z9ec69Ezz",
+    "title": "AI图像和视频究竟是如何工作的呢？",
+    "uploader": "技术Flow",
+    "duration_seconds": 2031,
+    "topics_from_description": [
+      "CLIP 与共享图文表示",
+      "DDPM、DDIM 和扩散采样",
+      "无分类器引导与文字条件"
+    ]
+  },
+  "english": {
+    "url": "https://www.youtube.com/watch?v=iv-5mZ_9CPY",
+    "title": "But how do AI images and videos actually work? | Guest video by Welch Labs",
+    "animation_source": "https://github.com/WelchLabs/videos/tree/master/_2025/sora"
+  },
+  "verification_scope": "Official Bilibili metadata and anonymous 480p video stream; author repository file tree; selected screenshots and short excerpts visually checked. Not a full transcript or a claim of full frame-by-frame viewing.",
+  "classroom_materials": {
+    "directory": "images/lecture_05/video-guide",
+    "index": "images/lecture_05/video-guide/index.html",
+    "keyframes": 14,
+    "silent_gifs": 4,
+    "silent_mp4s": 4,
+    "native_resolution": [
+      852,
+      480
+    ],
+    "gif_resolution": [
+      640,
+      360
+    ],
+    "timeline": "Chinese Bilibili edition",
+    "manifest": "images/lecture_05/video-guide/manifest.json",
+    "public_ppt_search": "No PPT/PPTX/PDF found in the 84-file public _2025/sora directory on 2026-10-19; animation source and notebooks are available."
+  }
+}

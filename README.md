@@ -14,6 +14,8 @@
 
 第四讲：`cd lectures && python3 execute.py -m lecture_04`，浏览 `?trace=var/traces/lecture_04.json`。从 CLIP 过渡到图像描述与视觉问答，讲视觉词元、LLaVA／BLIP-2／Flamingo 连接方式、答案区监督与多语言评价；包含 19 张图、三个交互视图、可在 CPU 运行的微型 VLM 训练，以及图像预处理案例和 LLaVA 各模块的维度代码。90 分钟教学安排、来源与演示边界见 [第四讲备课说明](lectures/notes/lecture_04.md)。
 
+第五讲：`cd lectures && python3 execute.py -m lecture_05`，浏览 `?trace=var/traces/lecture_05.json`。学习文生图扩散：真实像素加噪、CPU 微型模型训练与 DDPM 采样、Stable Diffusion 1.5 架构及模块维度、交叉注意力与 CFG；包含 22 张图、加噪／采样／结构三个交互视图。参考视频已整理为 [14 张关键帧＋4 段短动画的离线讲解图册](lectures/images/lecture_05/video-guide/index.html)，附中文时间戳、讲解提示和可暂停 MP4，课堂无需连续看视频。常规编译不下载权重、不需要 GPU／FFmpeg；45 分钟 × 2 课时安排及演示边界见 [第五讲备课说明](lectures/notes/lecture_05.md)。
+
 课件框架复用 [2026 春季《自然语言处理与语言习得》](https://github.com/JT-Ushio/nlp-and-la-spring-2026) 的 Python 执行轨迹生成器和 React Trace Viewer，保留 Markdown、公式、图片、链接、代码与变量展示、逐步浏览等功能。
 
 ## 安装与运行

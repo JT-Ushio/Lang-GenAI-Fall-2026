@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第五讲 · 扩散实验室</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f9fc;color:#17334a;font:16px/1.65 system-ui,-apple-system,"PingFang SC",sans-serif}main{max-width:1000px;margin:auto;padding:20px}h1{font-size:24px;margin:0 0 10px}h2{font-size:20px;margin:5px 0 12px}p{margin:10px 0}nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}button,select{font:inherit;border:1px solid #9ab9c1;background:white;border-radius:8px;padding:7px 12px;color:inherit;cursor:pointer}button[aria-selected="true"]{background:#287e80;color:white}section[hidden]{display:none}.card{background:white;border:1px solid #d5e3e9;border-radius:12px;padding:16px}.columns{display:grid;grid-template-columns:1fr 1fr;gap:16px}.canvas{text-align:center}canvas{max-width:100%;width:220px;height:auto;image-rendering:pixelated;background:#eee;border-radius:4px}.small{color:#536c80;font-size:14px}.metric{font-family:ui-monospace,monospace;background:#eaf1fa;padding:10px;border-radius:8px;overflow-wrap:anywhere}input[type=range]{width:100%;accent-color:#287e80}.controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.nodes{display:grid;grid-template-columns:1fr 1fr;gap:8px}.node{font-size:14px;text-align:left;min-height:73px}.node strong{display:block}.node[aria-pressed=true]{background:#e2f1f0;border-color:#287e80}.info{margin-top:12px;min-height:120px}label{display:block}a{color:#287e80}footer{margin-top:14px}.tag{background:#fff0da;border-radius:6px;padding:2px 6px}@media(max-width:580px){main{padding:12px}.columns{grid-template-columns:1fr}canvas{width:150px}.canvas{display:flex;gap:12px;align-items:center;justify-content:center}h1{font-size:21px}.nodes{grid-template-columns:1fr 1fr}.node{padding:8px}.small{font-size:13px}}
+</style></head><body><main>
+<h1>扩散实验室 · 加噪、生成与结构</h1>
+<nav aria-label="实验视图"><button data-view="noise">① 加噪滑块</button><button data-view="sampling">② 真实采样记录</button><button data-view="architecture">③ SD 1.5 维度</button></nav>
+<section id="noise"><h2>固定原图与噪声，只改变噪声水平</h2>
+<div class="columns"><div class="card canvas"><canvas id="clean" width="32" height="32" aria-label="原始红方块蓝圆形"></canvas><p>干净原图 x<sub>0</sub></p></div><div class="card canvas"><canvas id="noisy" width="32" height="32" aria-label="加噪图像"></canvas><p id="noise-label"></p></div></div>
+<div class="card" style="margin-top:12px"><label for="noise-t">时间数组索引 t：<strong id="t-value"></strong></label><input id="noise-t" type="range" min="0" max="999" value="199"><div id="noise-coeff" class="metric"></div><p class="small">x<sub>t</sub> = √ᾱ<sub>t</sub> × x<sub>0</sub> + √(1−ᾱ<sub>t</sub>) × ε。t=0 已经加过一次噪；左图单列干净原图。各位置使用同一份 ε，因此拖动展示的是噪声水平对照，不是一条马尔可夫链。</p><p class="small">网络接收未裁剪的浮点数；这里只为屏幕显示裁剪到 [-1,1]，再映射到 0–255。没有运行模型去噪。</p></div></section>
+<section id="sampling" hidden><h2>训练后的微型网络：从随机噪声开始画图</h2>
+<div class="controls"><label>类别条件 <select id="condition"><option value="vertical">0：竖条</option><option value="horizontal">1：横条</option></select></label><button id="play">播放</button><button id="reset">回到初始噪声</button></div>
+<div class="columns" style="margin-top:12px"><div class="card canvas"><canvas id="sample" width="8" height="8" aria-label="真实微型扩散采样状态"></canvas><p id="sample-label"></p></div><div class="card"><p><span class="tag">实际运行记录</span></p><p id="training-report"></p><p>横条与竖条复用相同初始噪声及后续随机数；改变的是类别条件。</p><p class="small">MLP（多层感知机），六张 8×8 灰度模板；100 次 DDPM 更新。这里不包含 CLIP 文本编码器，不是 Stable Diffusion 的缩小权重。</p></div></div>
+<label for="sample-step" style="margin-top:14px">已完成的采样更新</label><input id="sample-step" type="range" min="0" value="0"><div class="metric" id="sample-state"></div><p class="small">滑块读取 Python 保存的真实网络采样状态，没有在浏览器重新训练或倒放加噪过程。最后一步得到本次生成样本。</p></section>
+<section id="architecture" hidden><h2>经典 SD 1.5 · 512×512 输出的形状追踪</h2>
+<div class="controls"><label>B（每个提示生成的张数） <select id="batch"><option>1</option><option>2</option></select></label><label><input id="cfg" type="checkbox" checked> 批量合并 CFG 两条分支</label></div>
+<div id="nodes" class="nodes" style="margin-top:14px"></div><div class="card info" id="module-info" aria-live="polite"></div>
+<p class="small">点击模块读取维度与作用。这是公开配置的结构演示，不加载 SD 权重、不生成自然图像。文本序列包含特殊与补齐位置；B 与 CFG 带来的 2B 是两回事。</p>
+<p><a href="../sd-overview.svg" target="_blank" rel="noopener">独立打开完整结构图</a></p></section>
+<footer class="small">《以语言为中心的生成式AI》 · 第五讲。核心演示均为本地资源。</footer>
+</main><script src="data.js"></script><script>
+const D=window.DIFFUSION_DATA, $=id=>document.getElementById(id);let timer=null,chosen='latent';
+function draw(canvas,values,chw=false){const ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height,img=ctx.createImageData(w,h);for(let y=0;y<h;y++)for(let x=0;x<w;x++){const p=(y*w+x)*4;for(let c=0;c<3;c++){const v=chw?values[c][y][x]:values[y][x];img.data[p+c]=Math.round((Math.max(-1,Math.min(1,v))+1)*127.5)}img.data[p+3]=255}ctx.putImageData(img,0,0)}
+function stop(){if(timer)clearInterval(timer);timer=null;$('play').textContent='播放'}
+function view(name){stop();if(!['noise','sampling','architecture'].includes(name))name='noise';document.querySelectorAll('section').forEach(s=>s.hidden=s.id!==name);document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-selected',b.dataset.view===name));location.hash=name}
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>view(b.dataset.view));
+function noise(){const t=+$('noise-t').value,a=Math.sqrt(D.alpha_bar[t]),b=Math.sqrt(1-D.alpha_bar[t]);const values=D.clean.map((channel,c)=>channel.map((row,y)=>row.map((v,x)=>a*v+b*D.epsilon[c][y][x])));draw($('noisy'),values,true);$('t-value').textContent=t;$('noise-label').textContent='x_t · 索引 '+t;$('noise-coeff').textContent=`信号系数 √ᾱ = ${a.toFixed(4)}；噪声系数 √(1−ᾱ) = ${b.toFixed(4)}`}
+$('noise-t').oninput=noise;draw($('clean'),D.clean,true);noise();
+function sample(){const list=D.sampling[$('condition').value],i=+$('sample-step').value,state=list[i];draw($('sample'),state.image);$('sample-label').textContent=state.updates===0?'初始随机噪声':state.updates===100?'最终生成样本':'中间采样状态';$('sample-state').textContent=`已更新 ${state.updates} / 100 次`+(state.next_t>=0?`；下次网络输入 t=${state.next_t}`:'；已完成最后一步');}
+$('sample-step').max=D.sampling.vertical.length-1;$('sample-step').oninput=()=>{stop();sample()};$('condition').onchange=sample;$('reset').onclick=()=>{stop();$('sample-step').value=0;sample()};$('play').onclick=()=>{if(timer){stop();return}if(+$('sample-step').value===+$('sample-step').max)$('sample-step').value=0;$('play').textContent='暂停';timer=setInterval(()=>{let i=+$('sample-step').value;if(i>=+$('sample-step').max){stop();return}$('sample-step').value=i+1;sample()},350)};
+$('training-report').textContent=`${D.training.parameters.toLocaleString()} 个参数，${D.training.updates.toLocaleString()} 次训练更新。固定噪声评估 MSE：${D.training.history[0].noise_mse.toFixed(3)} → ${D.training.history.at(-1).noise_mse.toFixed(3)}。`;sample();
+function architecture(){const b=+$('batch').value,m=$('cfg').checked?2*b:b;const modules=[
+ ['tokens','① 分词器',`[${b},77]`,'文本先变成词元编号；77 是包含特殊标记与补齐位置的序列长度，不是 77 个词。'],
+ ['text','② CLIP 文本 Transformer',`[${b},77,768]`,'保留每个词元的上下文化向量。这里不取检索时的整句投影向量。空提示与目标提示分别编码，批量 CFG 时合并为 ['+m+',77,768]。'],
+ ['latent','③ 初始随机潜变量',`[${b},4,64,64]`,'纯文生图从随机噪声出发；四个潜通道没有固定的 RGB 或透明度含义。生成时无需把一张输入照片送入 VAE 编码器。'],
+ ['unet','④ U-Net 预测噪声',`[${m},4,64,64]`,'实际前向批量受 CFG 影响。代表层级：64²×320 → 32²×640 → 16²×1280 → 8²×1280，再升采样。跳跃连接保留空间信息，交叉注意力引入文字。'],
+ ['time','⑤ 时间嵌入',`[${m},320] → [${m},1280]`,'告诉网络当前噪声水平；经过时间 MLP 后进入 U-Net 残差块。不是文本序列的位置编码。'],
+ ['scheduler','⑥ 引导＋调度器',`[${m},4,64,64] → [${b},4,64,64]`,'CFG 时将两条噪声预测拆分并组合回 B；采样器据此更新潜变量，重复使用同一套网络参数。原始配置为 PNDM；课堂微型模型使用 DDPM。'],
+ ['vae','⑦ VAE 解码器',`[${b},4,64,64] → [${b},3,512,512]`,'生成结束后潜变量幅值先除以 0.18215。解码器把空间每边放大 8 倍，输出 RGB，再作显示转换。'],
+ ['encoder','训练侧：VAE 编码器',`[${b},3,512,512] → [${b},8,64,64]`,'训练图像编码为后验均值与对数方差，各 4 通道；采样为 4 通道潜变量，再乘 0.18215 后加噪。编码器不是纯文生图必经模块。']];
+ $('nodes').replaceChildren(...modules.map(([id,title,shape,info])=>{const button=document.createElement('button');button.className='node';button.setAttribute('aria-pressed',chosen===id);const strong=document.createElement('strong');strong.textContent=title;button.append(strong,document.createTextNode(shape));button.onclick=()=>{chosen=id;architecture()};return button}));const item=modules.find(m=>m[0]===chosen);$('module-info').replaceChildren();const strong=document.createElement('strong');strong.textContent=item[1]+' · '+item[2];const p=document.createElement('p');p.textContent=item[3];$('module-info').append(strong,p)}
+$('batch').onchange=architecture;$('cfg').onchange=architecture;architecture();view(location.hash.slice(1));addEventListener('pagehide',stop);
+</script></body></html>

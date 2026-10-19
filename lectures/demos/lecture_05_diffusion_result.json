@@ -1,0 +1,44 @@
+{
+  "parameters": 39280,
+  "updates": 4000,
+  "clean_templates": 6,
+  "diffusion_steps": 100,
+  "schedule": {
+    "type": "linear",
+    "beta_start": 0.0001,
+    "beta_end": 0.15,
+    "terminal_alpha_bar": 0.0003657975175883621
+  },
+  "history": [
+    {
+      "updates": 0,
+      "noise_mse": 0.9961640238761902
+    },
+    {
+      "updates": 50,
+      "noise_mse": 0.5056203603744507
+    },
+    {
+      "updates": 200,
+      "noise_mse": 0.17391738295555115
+    },
+    {
+      "updates": 500,
+      "noise_mse": 0.1497330665588379
+    },
+    {
+      "updates": 1000,
+      "noise_mse": 0.12930715084075928
+    },
+    {
+      "updates": 4000,
+      "noise_mse": 0.10194022953510284
+    }
+  ],
+  "new_noise_orientation_accuracy": 1.0,
+  "generated_count": 64,
+  "same_seed_reproducible": true,
+  "same_initial_noise_across_conditions": true,
+  "guidance_scale": 2.0,
+  "scope": "MLP on six training-domain 8x8 bar templates; fresh noise, no held-out clean-image generalization or natural-language capability."
+}

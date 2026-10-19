@@ -1,0 +1,350 @@
+{
+  "source_video": "https://www.bilibili.com/video/BV1Z9ec69Ezz",
+  "english_original": "https://www.youtube.com/watch?v=iv-5mZ_9CPY",
+  "author_code": "https://github.com/WelchLabs/videos/tree/master/_2025/sora",
+  "checked_at": "2026-10-19",
+  "bvid": "BV1Z9ec69Ezz",
+  "cid": 41943437272,
+  "native_resolution": [
+    852,
+    480
+  ],
+  "source_sha256": "d8481070e37a1bd39cc8ea70cc8618c45c2bf7899fde7706d891ab9505965327",
+  "scope": "Selected screenshots and short silent excerpts; not an official PPT or a complete transcript.",
+  "frames": [
+    {
+      "id": "01_iterative-generation",
+      "file": "01_iterative-generation.png",
+      "timestamp_seconds": 95,
+      "time": "01:35",
+      "title": "从随机状态开始，重复更新",
+      "lecture_section": "01／06",
+      "talk": "先指出输入是随机噪声；网络给出更新所需的预测，经过多次更新才得到结构。",
+      "caution": "本帧来自视频对 Wan 的介绍，骨干标为 Transformer；本课经典 SD 1.5 使用 U-Net，不能混用架构。",
+      "source_url": "https://www.bilibili.com/video/BV1Z9ec69Ezz/?t=95"
+    },
+    {
+      "id": "02_clip-encoders",
+      "file": "02_clip-encoders.png",
+      "timestamp_seconds": 256,
+      "time": "04:16",
+      "title": "复习 CLIP 的两个编码器",
+      "lecture_section": "01",
+      "talk": "文字和图片各自编码，再比较向量。这让模型能匹配描述，还没有自动获得把噪声画成图的生成网络。",
+      "caution": "图中的 512 是视频所举 CLIP 检索表示；本课 SD 1.5 条件采用 77×768 的文本序列隐藏状态。",
+      "source_url": "https://www.bilibili.com/video/BV1Z9ec69Ezz/?t=256"
+    },
+    {
+      "id": "03_clip-pairing",
+      "file": "03_clip-pairing.png",
+      "timestamp_seconds": 308,
+      "time": "05:08",
+      "title": "批量图文配对与对比学习",
+      "lecture_section": "01／课前复习",
+      "talk": "按行看文本，按列看图像；配对的目标是让同一概念靠近，其他候选形成区分。",
+      "caution": "这张表列的是配对的向量，不能直接把每格数字当成已经算好的相似度。",
+      "source_url": "https://www.bilibili.com/video/BV1Z9ec69Ezz/?t=308"
+    },
+    {
+      "id": "04_forward-noise",
+      "file": "04_forward-noise.png",
+      "timestamp_seconds": 520,
+      "time": "08:40",
+      "title": "加噪让图像结构逐渐消失",
+      "lecture_section": "03",
+      "talk": "沿左到右读：猫的细节越来越不明显，噪声越来越占主导；接着回到课堂的 RGB 加噪代码。",
+      "caution": "这是视频的过程示意；具体信号和噪声系数以课件公式及代码为准。",
+      "source_url": "https://www.bilibili.com/video/BV1Z9ec69Ezz/?t=520"
+    },
+    {
+      "id": "05_reverse-generation",
+      "file": "05_reverse-generation.png",
+      "timestamp_seconds": 548,
+      "time": "09:08",
+      "title": "训练好后，从噪声朝图像更新",
+      "lecture_section": "05／06",
+      "talk": "沿箭头方向读生成链：当前状态送入网络，再执行采样更新。不同噪声水平重复使用同一套训练好的参数。",
+      "caution": "多个网络图标表示多次调用，不表示每一步重新训练一个独立网络。",
+      "source_url": "https://www.bilibili.com/video/BV1Z9ec69Ezz/?t=548"
+    },
+    {
+      "id": "06_noise-target",
+      "file": "06_noise-target.png",
+      "timestamp_seconds": 662,
+      "time": "11:02",
+      "title": "训练目标是这次人为加入的噪声",
+      "lecture_section": "04",
+      "talk": "先找到黄色 ε，再找紫色网络预测：损失比较这两个量。干净图、时间和噪声可由程序构造训练样本。",
+      "caution": "本课采用 ε 预测；预测原图或 velocity 的模型需要相应的目标与采样公式。",
+      "source_url": "https://www.bilibili.com/video/BV1Z9ec69Ezz/?t=662"
+    },
+    {
+      "id": "07_two-pixel-space",
+      "file": "07_two-pixel-space.png",
+      "timestamp_seconds": 748,
+      "time": "12:28",
+      "title": "两个像素，也能组成一个数据空间",
+      "lecture_section": "06／拓展",
+      "talk": "横轴记录第一个像素，纵轴记录第二个像素；一幅只有两个像素的图像变成平面上的一个点。",
+      "caution": "二维平面是数据空间类比，不是原图的宽与高；真实图像每个标量都可能贡献一个维度。",
+      "source_url": "https://www.bilibili.com/video/BV1Z9ec69Ezz/?t=748"
+    },
+    {
+      "id": "08_score-field",
+      "file": "08_score-field.png",
+      "timestamp_seconds": 946,
+      "time": "15:46",
+      "title": "箭头场给出局部移动方向",
+      "lecture_section": "06／拓展",
+      "talk": "把螺旋上的黄点看成数据分布的样本，箭头表示在某个噪声水平下可参考的局部方向。",
+      "caution": "score function 在这里指对数密度的梯度，不是 CLIP 的图文评分；不用本图替代完整采样公式。",
+      "source_url": "https://www.bilibili.com/video/BV1Z9ec69Ezz/?t=946"
+    },
+    {
+      "id": "09_ddpm-paths",
+      "file": "09_ddpm-paths.png",
+      "timestamp_seconds": 1103,
+      "time": "18:23",
+      "title": "DDPM 的随机采样路径",
+      "lecture_section": "06",
+      "talk": "每条彩色路径从随机状态出发；受控随机项会让轨迹弯折，最终样本落向学到的结构。",
+      "caution": "单条轨迹不要求每一步肉眼更清晰，也不需要恢复某张预先指定的原图。",
+      "source_url": "https://www.bilibili.com/video/BV1Z9ec69Ezz/?t=1103"
+    },
+    {
+      "id": "10_ddpm-ddim",
+      "file": "10_ddpm-ddim.png",
+      "timestamp_seconds": 1415,
+      "time": "23:35",
+      "title": "同一训练目标，可以搭配不同采样路径",
+      "lecture_section": "06",
+      "talk": "比较左侧随机折线与右侧较平滑的路径，再说明网络预测和采样算法是两个层次。",
+      "caution": "DDIM 的确定性需要 η=0 且初始噪声与条件给定；本帧不是两种算法优劣的受控质量评测。",
+      "source_url": "https://www.bilibili.com/video/BV1Z9ec69Ezz/?t=1415"
+    },
+    {
+      "id": "11_text-conditioning",
+      "file": "11_text-conditioning.png",
+      "timestamp_seconds": 1588,
+      "time": "26:28",
+      "title": "文字特征进入去噪模型",
+      "lecture_section": "09",
+      "talk": "上方文本编码器输出条件特征，下面的去噪模型在每次更新时读取条件。语言提供内容约束。",
+      "caution": "视频本帧用 Transformer 作泛化示意；本课用 U-Net 内的交叉注意力讲 SD 1.5，不能照此图认定所有模型相同。",
+      "source_url": "https://www.bilibili.com/video/BV1Z9ec69Ezz/?t=1588"
+    },
+    {
+      "id": "12_conditional-distribution",
+      "file": "12_conditional-distribution.png",
+      "timestamp_seconds": 1644,
+      "time": "27:24",
+      "title": "类别条件挑选分布中的一部分",
+      "lecture_section": "09／10",
+      "talk": "先把整条螺旋看成数据集合，再想象不同颜色对应不同类别；给定条件改变的是希望生成哪部分样本。",
+      "caution": "二维类别示意不等同于现实自然语言的全部语义，也不是实际像素坐标。",
+      "source_url": "https://www.bilibili.com/video/BV1Z9ec69Ezz/?t=1644"
+    },
+    {
+      "id": "13_cfg-vector",
+      "file": "13_cfg-vector.png",
+      "timestamp_seconds": 1806,
+      "time": "30:06",
+      "title": "CFG：使用两种预测的差异",
+      "lecture_section": "10",
+      "talk": "先读灰色无条件方向，再读黄色条件方向；绿色差向量表示条件带来的偏向，随后按尺度组合。",
+      "caution": "视频用向量场 f 表示，课堂代码组合的是噪声预测 ε；符号和尺度约定应先对齐，不能机械抄符号。",
+      "source_url": "https://www.bilibili.com/video/BV1Z9ec69Ezz/?t=1806"
+    },
+    {
+      "id": "14_guidance-output",
+      "file": "14_guidance-output.png",
+      "timestamp_seconds": 1904,
+      "time": "31:44",
+      "title": "引导尺度会改变生成外观",
+      "lecture_section": "10／11",
+      "talk": "指出提示词、引导尺度和输出三个位置，讨论条件遵循、颜色、细节和多样性应分别评价。",
+      "caution": "这张截图本身不能证明所有控制变量相同；严谨比较还要固定模型、采样器、步数和随机种子。",
+      "source_url": "https://www.bilibili.com/video/BV1Z9ec69Ezz/?t=1904"
+    }
+  ],
+  "animations": [
+    {
+      "id": "a01_noise-to-generation",
+      "gif": "a01_noise-to-generation.gif",
+      "mp4": "a01_noise-to-generation.mp4",
+      "poster": "a01_noise-to-generation-poster.png",
+      "related_frame": "01_iterative-generation",
+      "start_seconds": 113,
+      "end_seconds": 125,
+      "duration_seconds": 12,
+      "start_time": "01:53",
+      "end_time": "02:05",
+      "title": "从噪声逐渐出现结构",
+      "talk": "观察迭代中的可见结构，不展开 Wan 的视频骨干。",
+      "caution": "片段中的结构与符号服务于视频讲解；本课固定 SD 1.5 配置和 ε 预测约定。",
+      "source_url": "https://www.bilibili.com/video/BV1Z9ec69Ezz/?t=113"
+    },
+    {
+      "id": "a02_forward-noising",
+      "gif": "a02_forward-noising.gif",
+      "mp4": "a02_forward-noising.mp4",
+      "poster": "a02_forward-noising-poster.png",
+      "related_frame": "04_forward-noise",
+      "start_seconds": 512,
+      "end_seconds": 520,
+      "duration_seconds": 8,
+      "start_time": "08:32",
+      "end_time": "08:40",
+      "title": "构造前向加噪链",
+      "talk": "沿着图中加噪箭头解释，不把这段动画倒放当成训练好的生成模型。",
+      "caution": "片段中的结构与符号服务于视频讲解；本课固定 SD 1.5 配置和 ε 预测约定。",
+      "source_url": "https://www.bilibili.com/video/BV1Z9ec69Ezz/?t=512"
+    },
+    {
+      "id": "a03_ddpm-ddim",
+      "gif": "a03_ddpm-ddim.gif",
+      "mp4": "a03_ddpm-ddim.mp4",
+      "poster": "a03_ddpm-ddim-poster.png",
+      "related_frame": "10_ddpm-ddim",
+      "start_seconds": 1408,
+      "end_seconds": 1416,
+      "duration_seconds": 8,
+      "start_time": "23:28",
+      "end_time": "23:36",
+      "title": "DDPM／DDIM 采样路径对照",
+      "talk": "路径规则可以不同；本段只解释形态，不据此宣称哪种质量一定更好。",
+      "caution": "片段中的结构与符号服务于视频讲解；本课固定 SD 1.5 配置和 ε 预测约定。",
+      "source_url": "https://www.bilibili.com/video/BV1Z9ec69Ezz/?t=1408"
+    },
+    {
+      "id": "a04_cfg-path",
+      "gif": "a04_cfg-path.gif",
+      "mp4": "a04_cfg-path.mp4",
+      "poster": "a04_cfg-path-poster.png",
+      "related_frame": "13_cfg-vector",
+      "start_seconds": 1815,
+      "end_seconds": 1823,
+      "duration_seconds": 8,
+      "start_time": "30:15",
+      "end_time": "30:23",
+      "title": "沿条件偏向更新状态",
+      "talk": "暂停在一个箭头处，说明网络给预测、采样器更新状态；接回课件 CFG 小算例。",
+      "caution": "片段中的结构与符号服务于视频讲解；本课固定 SD 1.5 配置和 ε 预测约定。",
+      "source_url": "https://www.bilibili.com/video/BV1Z9ec69Ezz/?t=1815"
+    }
+  ],
+  "files": {
+    "08_score-field.png": {
+      "bytes": 111981,
+      "sha256": "725511b3e942f2938e8520ee1c2dd164187efed3969fb54615efb3fff471834d"
+    },
+    "a02_forward-noising.gif": {
+      "bytes": 4108985,
+      "sha256": "2eb3d03bb7ffe1cd81e94bd43861867d7601bd74a1d2a3c8ff61af0a950b2028"
+    },
+    "a01_noise-to-generation.mp4": {
+      "bytes": 2657432,
+      "sha256": "d2f46737a4b3f1c16f9064d24e9178bcde3c183edbb548740cd79e650bdc55e2"
+    },
+    "index.html": {
+      "bytes": 16709,
+      "sha256": "61f5fc0d1422bf71493e88a06c7720acea7d65276f35513ad5d90cbdaf34b880"
+    },
+    "a04_cfg-path.gif": {
+      "bytes": 2150723,
+      "sha256": "2a89ce11ea1445daa6f7a4d7b6cda07b8e7ce5b30e1aab6d151a3729f907fe29"
+    },
+    "a01_noise-to-generation-poster.png": {
+      "bytes": 208553,
+      "sha256": "51c81a3ca07905e01effcc1cf12f6dacc54367663e3548978acef469eef78ae6"
+    },
+    "13_cfg-vector.png": {
+      "bytes": 83516,
+      "sha256": "4705725d97616d72688aca7d6496beb9a14be089c0bc49412bffd44a4277a772"
+    },
+    "09_ddpm-paths.png": {
+      "bytes": 218108,
+      "sha256": "fd517afa2c7c22bd792fad6b771649e13ad1f7d75442329b0a1a898b874fff9c"
+    },
+    "a01_noise-to-generation.gif": {
+      "bytes": 8154957,
+      "sha256": "a17e7b7c8d55ac84bca5788e80654fc36191a38772e87e526e51000f6ee9a9a1"
+    },
+    "a02_forward-noising.mp4": {
+      "bytes": 727390,
+      "sha256": "82ceb63b3797c271a0944ce55fbea8e723a3c40095c985d243e56fb38f556601"
+    },
+    "10_ddpm-ddim.png": {
+      "bytes": 264169,
+      "sha256": "edf47add1047a89b84c83f089b27cdf37e3fc5ac6b106300f297c0d19e8b0814"
+    },
+    "05_reverse-generation.png": {
+      "bytes": 659448,
+      "sha256": "f6e2df325e4f1fb70aaaa75d5cba4aa9a2e58f0b728e07c2b0e02926f0115fae"
+    },
+    "12_conditional-distribution.png": {
+      "bytes": 25271,
+      "sha256": "593b570cfe1113ce34351582ee3ae78844af4a9932ee441d5ac78776087cea87"
+    },
+    "06_noise-target.png": {
+      "bytes": 212568,
+      "sha256": "06a1781889ccc67d43d7a7b7cf9515634e22890317fed2af38ed2c8595a89b97"
+    },
+    "a04_cfg-path-poster.png": {
+      "bytes": 58443,
+      "sha256": "f35a7bbc2fc621777512abdc838d8039ebcf4bbb0abef86e0d89e744ddff310e"
+    },
+    "a04_cfg-path.mp4": {
+      "bytes": 598724,
+      "sha256": "8194f6fae68406a02291b28b0c3cce1cadf2b4bc884ef779358a40b8a14f69c0"
+    },
+    "a03_ddpm-ddim-poster.png": {
+      "bytes": 325791,
+      "sha256": "84cd6a7f5645db1ddbfb215526588e9a2e1117b57bd7619286ad1ca440dc29fa"
+    },
+    "README.md": {
+      "bytes": 8562,
+      "sha256": "0668b6f2a1687945ff48bbbeb20583acc93785e7e0be9ac1c59d8c403804577d"
+    },
+    "02_clip-encoders.png": {
+      "bytes": 762169,
+      "sha256": "b569c480d4a732fc9df6294bc329f004ac8660f2fe2ce35d38d4e707a56c166b"
+    },
+    "a03_ddpm-ddim.mp4": {
+      "bytes": 980279,
+      "sha256": "c83ac56c515df8f6d05c3f44d9b645c2245ee6779102c3d65808180bc7a40fd9"
+    },
+    "a02_forward-noising-poster.png": {
+      "bytes": 478906,
+      "sha256": "a9471bcb39ccf7b61e21ed578820ee67e08f8f7e4d000f36c64ea9498e04ea63"
+    },
+    "01_iterative-generation.png": {
+      "bytes": 177836,
+      "sha256": "b164e314214b3de277924aa2773c3e07d8e596dc591a8a33570be901aea8a8c4"
+    },
+    "14_guidance-output.png": {
+      "bytes": 231897,
+      "sha256": "a98b4940db15b6a03c5834c6cf47a31419dbaf564852967fdafb937bce0bd47d"
+    },
+    "11_text-conditioning.png": {
+      "bytes": 739261,
+      "sha256": "2a4a91f769820a8f15e97f8e88daa9c86d92f46e3c9eac8575a3fb4587f92247"
+    },
+    "a03_ddpm-ddim.gif": {
+      "bytes": 1982249,
+      "sha256": "53c7c6229db508ea291f50e449052aae85b91b5c7b85d1311da092d63b497c32"
+    },
+    "04_forward-noise.png": {
+      "bytes": 725037,
+      "sha256": "0ee2e5684f8dbe825b0fe2a80aa4f88baa233665711dc4541054cfd612530582"
+    },
+    "03_clip-pairing.png": {
+      "bytes": 572573,
+      "sha256": "2de2e20948efe927f56ab2b6c1d61f2cb118b25f625fbf433af811b6d4faad30"
+    },
+    "07_two-pixel-space.png": {
+      "bytes": 41670,
+      "sha256": "d629ab3382a6ad423f372dea8d9ebe6ca0dbb720865a07811366e7ac0c5dd310"
+    }
+  }
+}
