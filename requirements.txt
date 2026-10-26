@@ -2,6 +2,6 @@
 torch>=2.8,<3
 sympy>=1.14,<2
 requests>=2.32,<3
-# Lectures 02/04/05: arrays, synthetic images, preprocessing and diffusion figures.
+# Lectures 02/04/05/06: arrays, images, diffusion and unified multimodal demos.
 numpy>=1.26,<3
 Pillow>=10,<13

@@ -16,6 +16,8 @@
 
 第五讲：`cd lectures && python3 execute.py -m lecture_05`，浏览 `?trace=var/traces/lecture_05.json`。学习文生图扩散：真实像素加噪、CPU 微型模型训练与 DDPM 采样、Stable Diffusion 1.5 架构及模块维度、交叉注意力与 CFG；包含 22 张图、加噪／采样／结构三个交互视图。参考视频已整理为 [14 张关键帧＋4 段短动画的离线讲解图册](lectures/images/lecture_05/video-guide/index.html)，附中文时间戳、讲解提示和可暂停 MP4，课堂无需连续看视频。常规编译不下载权重、不需要 GPU／FFmpeg；45 分钟 × 2 课时安排及演示边界见 [第五讲备课说明](lectures/notes/lecture_05.md)。
 
+第六讲：`cd lectures && python3 execute.py -m lecture_06`，浏览 `?trace=var/traces/lecture_06.json`。学习多模态理解与生成统一：交错图文序列、Janus／Show-o／BAGEL 架构、联合训练与共享梯度，再进入多模态智能体的观察、动作、反馈与验收。包含 17 张图、三个交互视图，以及同一个 CPU 微型 Transformer 的看图回答、图像生成、编辑与故障恢复演示；普通编译不下载权重。两课时安排、运行方法与一手来源见 [第六讲备课说明](lectures/notes/lecture_06.md)。
+
 课件框架复用 [2026 春季《自然语言处理与语言习得》](https://github.com/JT-Ushio/nlp-and-la-spring-2026) 的 Python 执行轨迹生成器和 React Trace Viewer，保留 Markdown、公式、图片、链接、代码与变量展示、逐步浏览等功能。
 
 ## 安装与运行

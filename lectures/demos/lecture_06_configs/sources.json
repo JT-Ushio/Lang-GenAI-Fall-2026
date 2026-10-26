@@ -1,0 +1,27 @@
+{
+  "checked_at": "2026-10-26",
+  "files": [
+    {
+      "repository": "stable-diffusion-v1-5/stable-diffusion-inpainting",
+      "revision": "8a4288a76071f7280aedbdb3253bdb9e9d5d84bb",
+      "url": "https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-inpainting/resolve/8a4288a76071f7280aedbdb3253bdb9e9d5d84bb/unet/config.json",
+      "local": "inpaint_unet.json",
+      "sha256": "669f6581087fac5b16c44e42c58b359a35eadf2af5691d7945480bd7ceac8e6d"
+    },
+    {
+      "repository": "lllyasviel/sd-controlnet-canny",
+      "revision": "7f2f69197050967007f6bbd23ab5e52f0384162a",
+      "url": "https://huggingface.co/lllyasviel/sd-controlnet-canny/resolve/7f2f69197050967007f6bbd23ab5e52f0384162a/config.json",
+      "local": "controlnet.json",
+      "sha256": "dbeca6e56d9319a78d6a63758887334a6143bd270e590864b8182b0139d1a18c"
+    },
+    {
+      "repository": "timbrooks/instruct-pix2pix",
+      "revision": "31519b5cb02a7fd89b906d88731cd4d6a7bbf88d",
+      "url": "https://huggingface.co/timbrooks/instruct-pix2pix/resolve/31519b5cb02a7fd89b906d88731cd4d6a7bbf88d/unet/config.json",
+      "local": "instruct_unet.json",
+      "sha256": "f6c4ea486da4d813c389de1fc405fcb64139ca18f0729733dc177dad17854347"
+    }
+  ],
+  "scope": "Public configuration snapshots only; no model weights."
+}

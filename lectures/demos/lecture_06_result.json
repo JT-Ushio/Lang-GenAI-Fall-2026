@@ -1,0 +1,36 @@
+{
+  "training_parameters": 39280,
+  "training_updates": 4000,
+  "noise_mse_before": 0.9961640238761902,
+  "noise_mse_after": 0.10194022953510284,
+  "rgb_metrics": {
+    "unchanged": {
+      "outside_mae": 0.0,
+      "inside_target_mae": 0.44333335757255554
+    },
+    "global": {
+      "outside_mae": 0.1467316895723343,
+      "inside_target_mae": 0.0
+    },
+    "local": {
+      "outside_mae": 0.0,
+      "inside_target_mae": 0.0
+    },
+    "soft": {
+      "outside_mae": 0.003210952505469322,
+      "inside_target_mae": 0.05663607269525528
+    }
+  },
+  "toy_inpaint_outside_max_error": 0.0,
+  "all_known_mask_returns_source": true,
+  "all_editable_mask_matches_unrestricted": true,
+  "zero_conv": {
+    "initial_output_delta": 0.0,
+    "zero_grad_step_1": 1.223711371421814,
+    "branch_grad_step_1": 0.0,
+    "zero_grad_step_2": 1.1380337476730347,
+    "branch_grad_step_2": 0.09154750406742096,
+    "frozen_base_has_gradient": false
+  },
+  "scope": "RGB edits are array operations. Learned edits use the six-template lecture05 MLP; no natural-language encoder, pretrained SD inference or held-out clean-image generalization."
+}

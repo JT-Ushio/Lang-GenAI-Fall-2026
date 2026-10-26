@@ -1,0 +1,13 @@
+{
+  "checked_at": "2026-10-26",
+  "files": [
+    {
+      "repository": "deepseek-ai/Janus-Pro-7B",
+      "revision": "5c3eb3fb2a3b61094328465ba61fcd4272090d67",
+      "url": "https://huggingface.co/deepseek-ai/Janus-Pro-7B/resolve/5c3eb3fb2a3b61094328465ba61fcd4272090d67/config.json",
+      "local": "janus_pro_7b.json",
+      "sha256": "fd762fa4437fe01740060864c94aa66f863bb9eb38071e0c3950a13bbd391938"
+    }
+  ],
+  "scope": "Public configuration only; no pretrained weights."
+}
