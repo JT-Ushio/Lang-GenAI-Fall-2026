@@ -18,6 +18,8 @@
 
 第六讲：`cd lectures && python3 execute.py -m lecture_06`，浏览 `?trace=var/traces/lecture_06.json`。学习多模态理解与生成统一：交错图文序列、Janus／Show-o／BAGEL 架构、联合训练与共享梯度，再进入多模态智能体的观察、动作、反馈与验收。包含 17 张图、三个交互视图，以及同一个 CPU 微型 Transformer 的看图回答、图像生成、编辑与故障恢复演示；普通编译不下载权重。两课时安排、运行方法与一手来源见 [第六讲备课说明](lectures/notes/lecture_06.md)。
 
+第七讲：`cd lectures && python3 execute.py -m lecture_07`，浏览 `?trace=var/traces/lecture_07.json`。介绍语音与语言对齐，包含正常／慢速试听、STFT 与梅尔频谱、CTC 路径求和和可执行优化、Whisper tiny 维度、交叉注意力以及 WER/CER；配套 36 页中文演示文稿，见 [第七讲备课说明](lectures/notes/lecture_07.md)。常规编译无需下载模型。
+
 课件框架复用 [2026 春季《自然语言处理与语言习得》](https://github.com/JT-Ushio/nlp-and-la-spring-2026) 的 Python 执行轨迹生成器和 React Trace Viewer，保留 Markdown、公式、图片、链接、代码与变量展示、逐步浏览等功能。
 
 ## 安装与运行

@@ -1,0 +1,57 @@
+{
+  "text": "你好，欢迎来到语音与语言对齐课堂。请听同一句话在不同语速下的变化。",
+  "voice": "macOS Tingting, zh_CN",
+  "rate": 16000,
+  "samples": 119630,
+  "duration": 7.476875,
+  "slow_duration": 9.934375,
+  "power_shape": [
+    201,
+    747
+  ],
+  "mel_shape": [
+    80,
+    747
+  ],
+  "ctc_probability": 0.6880000000000001,
+  "history": [
+    {
+      "step": 0,
+      "loss": 2.743134021759033
+    },
+    {
+      "step": 10,
+      "loss": 0.27958929538726807
+    },
+    {
+      "step": 30,
+      "loss": 0.016882896423339844
+    },
+    {
+      "step": 100,
+      "loss": 0.004964068531990051
+    }
+  ],
+  "decoded": [
+    1,
+    2,
+    1
+  ],
+  "sources": {
+    "official_figure": "https://raw.githubusercontent.com/openai/whisper/main/approach.png",
+    "mel_filters": "https://raw.githubusercontent.com/openai/whisper/main/whisper/assets/mel_filters.npz",
+    "config": "https://huggingface.co/openai/whisper-tiny/raw/main/config.json",
+    "chinese_figure": "whisper-chinese.png: AI-assisted teaching schematic based on official tiny configuration"
+  },
+  "assets": {
+    "mel_filters.npz": {
+      "sha256": "7450ae70723a5ef9d341e3cee628c7cb0177f36ce42c44b7ed2bf3325f0f6d4c",
+      "bytes": 4271
+    },
+    "whisper-tiny-config.json": {
+      "sha256": "ffdccec4f3211f4c63310f2b7098f309fe70f3952cedc5e4d11e43f5b2379b98",
+      "bytes": 1983
+    }
+  },
+  "decoded_text": "看一看"
+}
