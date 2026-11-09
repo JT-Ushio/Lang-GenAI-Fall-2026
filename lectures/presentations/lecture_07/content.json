@@ -152,6 +152,41 @@
     "snippet": "window = torch.hann_window(400)\ns = torch.stft(x, 400, 160,\n    window=window,\n    return_complex=True)\npower = s[:, :-1].abs() ** 2\nmel = filters @ power"
   },
   {
+    "title": "代码实验：从 WAV 到梅尔频谱",
+    "paragraphs": [
+      "输入是 16 kHz 单声道 PCM WAV。鸟叫样本长 5 秒，共 80,000 个采样点。",
+      "25 ms 窗口，10 ms 帧移。STFT 功率矩阵为 201 × 500。",
+      "用 80 × 201 的梅尔滤波器矩阵做乘法，得到 80 × 500，再取对数。"
+    ],
+    "figure": null,
+    "code": "mel_examples",
+    "source": "https://github.com/openai/whisper/blob/main/whisper/audio.py",
+    "notes": "课堂运行讲义里的 mel_examples()，查看各阶段张量形状。",
+    "snippet": "from demos.lecture_07_speech import (\n    read_wav, mel_power_spectrogram)\n\nfolder = 'videos/lecture_07/mel-examples'\nrate, wave = read_wav(f'{folder}/bird.wav')\nassert rate == 16000\n# (201, T), (80, T)\npower, mel = mel_power_spectrogram(wave)\nlog_db = 10 * mel.clamp_min(1e-10).log10()\nprint(wave.shape, power.shape, mel.shape)"
+  },
+  {
+    "title": "鸟叫与轻雨的梅尔频谱",
+    "paragraphs": [
+      "鸟叫呈间断的窄频纹理，轻雨在较长时间里覆盖多个频带。",
+      "两段各 5 秒，使用相同时间轴和相对组内峰值的色标。"
+    ],
+    "figure": "mel-examples/nature.png",
+    "code": null,
+    "source": "https://github.com/karolpiczak/ESC-50/blob/master/audio/3-181132-A-14.wav\nhttps://commons.wikimedia.org/wiki/File:Sound_of_light_rainfall.ogg",
+    "notes": "鸟叫原始录音来自 keweldog（Freesound 181132，CC0），ESC-50 整库采用 CC BY-NC 3.0。轻雨为 Mijesty 的录音，CC BY-SA 4.0，取前 5 秒。两段转为 16 kHz 单声道，统一衰减 5%。试听位于网页讲义。"
+  },
+  {
+    "title": "《原神》提米的四种语言配音",
+    "paragraphs": [
+      "同一条游戏台词，比较中、日、英、韩四版的时长、停顿和频带纹理。",
+      "日语约 4.60 秒，英语约 2.75 秒。差异也受译文、配音和表演方式影响。"
+    ],
+    "figure": "mel-examples/timmie.png",
+    "code": null,
+    "source": "https://github.com/simon300000/genshin-voice",
+    "notes": "四段来自同一游戏内语音 ID vo_tips_hexenzirkel_010_3_timmie_01.wem，源自 Genshin Voice，版权归原权利人。试听位于网页讲义。灰白表示该录音已结束。"
+  },
+  {
     "title": "对齐困难：同一句话有许多条路径",
     "paragraphs": [
       "设声音编码后有 T 个时间位置，文字有 U 个单位，一般 T 大于 U。",

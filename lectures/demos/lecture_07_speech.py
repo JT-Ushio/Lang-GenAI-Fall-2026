@@ -17,14 +17,20 @@ def read_wav(path):
     return rate, torch.from_numpy(samples.copy())
 
 
-def features(samples):
-    """Same feature computation as Whisper for 16 kHz mono; 80-bin official filters."""
+def mel_power_spectrogram(samples):
+    """Return linear-frequency and Mel power spectra for 16 kHz mono PCM."""
     window = torch.hann_window(400)
     stft = torch.stft(samples, n_fft=400, hop_length=160, window=window,
                       return_complex=True)
     power = stft[:, :-1].abs().square()
-    filters = torch.from_numpy(np.load(ROOT / 'images/lecture_07/mel_filters.npz')['mel_80'])
-    mel_power = filters @ power
+    with np.load(ROOT / 'images/lecture_07/mel_filters.npz') as bank:
+        filters = torch.from_numpy(bank['mel_80'])
+    return power, filters @ power
+
+
+def features(samples):
+    """Whisper's log compression and scaling for the 80-band Mel frontend."""
+    power, mel_power = mel_power_spectrogram(samples)
     log_mel = mel_power.clamp_min(1e-10).log10()
     log_mel = torch.maximum(log_mel, log_mel.max() - 8)
     return power, (log_mel + 4) / 4

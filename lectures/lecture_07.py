@@ -3,7 +3,7 @@ import inspect
 import torch
 from execute_util import audio, image, link, text
 from demos.lecture_07_speech import (
-    read_wav, features, collapse, ctc_example, optimize_ctc,
+    read_wav, mel_power_spectrogram, features, collapse, ctc_example, optimize_ctc,
     attention_demo, edit_distance, shape_demo,
 )
 
@@ -39,7 +39,50 @@ def feature_demo():
     print('第一帧前 8 个频带：', first_frame)
     assert power.shape[0] == 201 and mel.shape[0] == 80
     text('### 实际执行的特征提取函数')
-    text('```python\n' + inspect.getsource(features) + '\n```')
+    text('```python\n' + inspect.getsource(mel_power_spectrogram) + '\n\n' + inspect.getsource(features) + '\n```')
+
+
+def mel_examples():
+    text('## 实验：从一段 WAV 得到梅尔频谱')
+    text('本例用 16 kHz 单声道 PCM WAV。每隔 10 ms 分析一个 25 ms 窗口，计算功率，再将 201 个线性频率格汇总为 80 个梅尔频带。')
+    text('```python\n' + inspect.getsource(read_wav) + '\n```')
+    rate, waveform = read_wav('videos/lecture_07/mel-examples/bird.wav')  # @stepover
+    assert rate == 16000
+    waveform_shape = tuple(waveform.shape)  # @inspect waveform_shape
+    power, mel_power = mel_power_spectrogram(waveform)  # @stepover
+    stft_shape = tuple(power.shape)  # @inspect stft_shape
+    mel_shape = tuple(mel_power.shape)  # @inspect mel_shape
+    log_mel_db = 10 * mel_power.clamp_min(1e-10).log10()
+    example_column = log_mel_db[:6, 100].tolist()  # @inspect example_column
+    print(f'波形 {waveform_shape} → STFT 功率 {stft_shape} → 梅尔功率 {mel_shape}')
+    print('约 1 秒时的前六个频带（dB）：', example_column)
+    text('下图用组内最高梅尔功率作 0 dB 参考。横轴是秒，纵轴是梅尔频带编号。颜色越亮，该时间与频带的功率越大。')
+    text('### 鸟叫与轻雨')
+    text('鸟叫录音')
+    audio('videos/lecture_07/mel-examples/bird.wav')
+    text('轻雨录音')
+    audio('videos/lecture_07/mel-examples/rain.wav')
+    image('images/lecture_07/mel-examples/nature.png', width=900, style=STYLE)
+    text('鸟叫中的短促叫声形成一段段较窄的频率纹理。轻雨在较长时间内向多个频带提供能量，图上更像连续的背景。')
+    link(title='鸟叫素材 · ESC-50', url='https://github.com/karolpiczak/ESC-50/blob/master/audio/3-181132-A-14.wav')
+    link(title='轻雨录音 · Wikimedia Commons', url='https://commons.wikimedia.org/wiki/File:Sound_of_light_rainfall.ogg')
+
+
+def multilingual_mel_examples():
+    text('### 《原神》提米（Timmie）的同一句台词')
+    text('四段录音对应同一个游戏内语音 ID。场景是提米发现鸽子被吓跑。')
+    text('中文')
+    audio('videos/lecture_07/mel-examples/timmie-zh.wav')
+    text('日语')
+    audio('videos/lecture_07/mel-examples/timmie-ja.wav')
+    text('英语')
+    audio('videos/lecture_07/mel-examples/timmie-en.wav')
+    text('韩语')
+    audio('videos/lecture_07/mel-examples/timmie-ko.wav')
+    image('images/lecture_07/mel-examples/timmie.png', width=900, style=STYLE)
+    text('先找停顿和连续发声的区间，再比较时长和频带纹理。本例中日语约 4.60 秒，英语约 2.75 秒。')
+    text('四版音频同时体现译文、配音演员和表演方式的差异。图中灰白留空表示音频已结束。')
+    link(title='语音来源与游戏内标注 · Genshin Voice', url='https://github.com/simon300000/genshin-voice')
 
 
 def collapse_demo():
@@ -424,6 +467,8 @@ def main():
     section_09()
     section_10()
     section_11()
+    mel_examples()
+    multilingual_mel_examples()
     section_12()
     section_13()
     section_14()
