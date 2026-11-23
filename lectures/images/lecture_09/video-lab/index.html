@@ -1,0 +1,20 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>时间顺序与抽帧实验</title><style>
+body{font:16px/1.6 system-ui,"PingFang SC",sans-serif;background:#f8fafc;color:#153553;margin:24px}h1{font-size:25px}button,select{font:inherit;padding:6px 12px;margin:4px;border:1px solid #adc5d0;border-radius:7px;background:white;color:#153553}button.active{background:#167d8d;color:white}video{width:100%;max-width:720px;background:#e8f0f5;border-radius:10px}#frames{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}#frames img{width:100%;border-radius:6px}figure{margin:0}figcaption{font-size:13px}#readout{padding:10px;background:#e1edf2;margin:10px 0}label{display:inline-block;margin:8px}input[type=range]{width:95%}.note{color:#526d7c;font-size:14px}
+</style><h1>同一批画面，怎样组织时间？</h1>
+<div id="modes"><button data-mode="original" class="active">原顺序</button><button data-mode="sparse">只保留八帧</button><button data-mode="reverse">倒放</button><button data-mode="shuffle">打乱帧序</button></div>
+<video id="player" controls preload="metadata" src="../../../videos/lecture_09/operation.mp4"></video>
+<div id="readout">正在读取时间映射……</div><input id="seek" aria-label="播放位置" type="range" min="0" max="11.875" step="0.125" value="0">
+<p class="note">动画为本课程序绘制。倒放与打乱版只重排画面并移除音轨；原始采集时刻与当前播放位置分别显示。</p>
+<label>均匀抽帧数量 <select id="count"><option>4</option><option selected>8</option><option>16</option></select></label>
+<label><input id="labels" type="checkbox">显示教师编写的阶段标注</label><div id="frames"></div>
+<script src="../timeline-data.js"></script><script>
+let meta,mode='original';const player=document.querySelector('#player'),seek=document.querySelector('#seek');
+const files={original:'operation.mp4',sparse:'sparse-eight.mp4',reverse:'reversed.mp4',shuffle:'shuffled.mp4'};
+function sourceIndex(j){j=Math.max(0,Math.min(95,j));if(mode==='reverse')return 95-j;if(mode==='shuffle')return meta.shuffle_order[j];if(mode==='sparse')return meta.uniform_eight[Math.min(7,Math.floor(j/12))];return j;}
+function update(){if(!meta)return;const j=Math.min(95,Math.floor(player.currentTime*8)),i=sourceIndex(j);seek.value=player.currentTime;document.querySelector('#readout').textContent=`当前播放 ${player.currentTime.toFixed(2)} 秒 · 对应原视频帧 ${i} · 原始采集时刻 ${(i/8).toFixed(2)} 秒`;}
+function storyboard(){if(!meta)return;const n=+document.querySelector('#count').value,labels=document.querySelector('#labels').checked;document.querySelector('#frames').innerHTML=Array.from({length:n},(_,k)=>{const j=Math.floor((k+.5)*96/n),i=sourceIndex(j);const event=meta.events.find(e=>i/8>=e.start&&i/8<e.end);return `<figure><img src="../frames/frame_${String(i).padStart(3,'0')}.jpg" alt="原帧 ${i}"><figcaption>播放位 ${(j/8).toFixed(2)} 秒 → 原帧 ${i}${labels?' · '+event.label:''}</figcaption></figure>`}).join('');}
+document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;player.src='../../../videos/lecture_09/'+files[mode];document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('active',x===b));storyboard();update();});
+seek.oninput=()=>{player.currentTime=+seek.value;};player.ontimeupdate=update;document.querySelector('#count').onchange=storyboard;document.querySelector('#labels').onchange=storyboard;
+meta=window.clipMetadata;if(meta){storyboard();update();}else{document.querySelector('#readout').textContent='未能读取时间映射，请从本地课件服务打开。';}
+</script></html>

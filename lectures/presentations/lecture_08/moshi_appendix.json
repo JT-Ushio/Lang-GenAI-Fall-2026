@@ -1,0 +1,39 @@
+[
+  {
+    "key": "moshi_architecture",
+    "title": "Moshi：边听边说的全双工模型",
+    "paragraphs": [
+      "Moshi 将用户语音、系统语音分成两条同步流，并为系统语音预测对齐的文字流。允许插话、重叠和短回应。",
+      "Mimi 流式编码器将 24 kHz 语音变成每秒 12.5 帧；Moshi 使用八个码本，每个码本容量为 2048。",
+      "时间 Transformer 聚合历史，深度 Transformer 建模同一帧的码本关系。文字“内心独白”帮助组织要说的内容。"
+    ],
+    "sources": [
+      "https://arxiv.org/abs/2410.00037",
+      "https://github.com/kyutai-labs/moshi"
+    ],
+    "figure": "moshi-official.png",
+    "demo": null,
+    "snippet": null,
+    "layout": "figure",
+    "notes": "Moshi 技术报告 Figure 1。原始模型以英语为主；本课中文对话是接口示意，不声称运行了中文 Moshi。时间模型 7B、32 层、4096 维；深度模型 6 层、1024 维。",
+    "table": null
+  },
+  {
+    "key": "moshi_streams",
+    "title": "两条对话流与多个码本",
+    "paragraphs": [
+      "中文接口示意：用户说“明天……不，改成后天”，系统可在听的同时发出“嗯”，随后修正回答。",
+      "四秒对应 50 个编码帧。教学张量 [B,2,8,50] 的轴依次为批次、说话流、码本、时间；文字另有一条对齐流。",
+      "两条说话流描述谁在说；八个码本描述每条流的编码层级。原始 Moshi 的中文能力不由这个形状演示验证。"
+    ],
+    "sources": [
+      "https://arxiv.org/abs/2410.00037"
+    ],
+    "figure": null,
+    "demo": "moshi_shape_code",
+    "snippet": "audio_ids = torch.empty(1, 2, 8, 50,\n                        dtype=torch.long)\ntext_ids = torch.empty(1, 50,\n                       dtype=torch.long)\nprint(audio_ids.shape)\n# [1, 2, 8, 50]",
+    "layout": null,
+    "notes": "",
+    "table": null
+  }
+]

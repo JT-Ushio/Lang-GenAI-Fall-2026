@@ -1,0 +1,322 @@
+{
+  "checked": "2026-11-16",
+  "figures": [
+    {
+      "path": "cosyvoice2-official.png",
+      "source": "https://arxiv.org/html/2412.10117v3/CosyVoice2-overview.png",
+      "sha256": "3fe67cdba8b6d4cd5dd80f6942c8319b3511e77488f3f432fe0a4951ceed03b1"
+    },
+    {
+      "path": "ace15-official.png",
+      "source": "https://arxiv.org/html/2602.00744v1/figures/ace-stepv1.5_framework.png",
+      "sha256": "12b680ef6efa0d6f62c023ece3901304e29484dca9118dffadfcd42de66e1c7d"
+    },
+    {
+      "path": "yue2-official.png",
+      "source": "https://arxiv.org/html/2609.33757v1/yue2_overview.png",
+      "sha256": "c77aa2550fef37e477dc8b0f83107dc0ba41ac74d45b4f0538c229ef77566d8b"
+    },
+    {
+      "path": "musicgen-architecture.png",
+      "source": "AI-assisted Chinese teaching schematic based on AudioCraft four-codebook configuration",
+      "sha256": "06d43999b8256b04d12a98d2c44261db20a302a80262c63919daf6e3502da270"
+    },
+    {
+      "path": "muse-official.png",
+      "source": "https://arxiv.org/html/2601.03973v3/intro.png",
+      "sha256": "7d5a1ba7a6f8acd39b4e7fe54d0f7e925ffddb4eae1706fa4b4501554709c96f"
+    },
+    {
+      "path": "muse-data-official.png",
+      "source": "https://arxiv.org/html/2601.03973v3/data_pipeline.png",
+      "sha256": "cb4bc4e1e1da6a1ee2019568076885d18450ab6827385d9bc2f127340336c649"
+    },
+    {
+      "path": "moshi-official.png",
+      "source": "https://arxiv.org/html/2410.00037v2/figures/overview_moshi_v2.png",
+      "sha256": "aa0fbc6782218b6b5f7ca294eb3f24a79ce2d136af332eb70d4d322408360d7e"
+    },
+    {
+      "path": "songgen-official.png",
+      "source": "https://arxiv.org/html/2502.13128v2/Figure/framework1.png",
+      "sha256": "8cbebf05c2ca0760907c7d2d5d96ba3c21929773f432184d936bc7d79edf16c8"
+    },
+    {
+      "path": "multitrack.png",
+      "source": "Original analytic synthesis; scripts/build_lecture_08_multitrack.py",
+      "sha256": "a8f313f12ee54ffd53a0b8cf477258661d0a813631445080003cd4190a08638a"
+    },
+    {
+      "path": "music-chords.png",
+      "source": "Original music examples; scripts/build_lecture_08_music.py",
+      "sha256": "590608a9fa41298bcaf894da7c1afbe660ad1f4bbbb2006305ddff81a66ff4b0"
+    },
+    {
+      "path": "music-form.png",
+      "source": "Original music examples; scripts/build_lecture_08_music.py",
+      "sha256": "e525897c01909a690cce09a4c1b56110030f15664ba490907e5dda13cc7e9610"
+    },
+    {
+      "path": "music-meter.png",
+      "source": "Original music examples; scripts/build_lecture_08_music.py",
+      "sha256": "dac6a8798508630b3582fbc28a31ec1f78a5feacf60ef2c09f45741593a99047"
+    },
+    {
+      "path": "music-rhythm.png",
+      "source": "Original music examples; scripts/build_lecture_08_music.py",
+      "sha256": "3408162300867dc50fec3c6a5264c0ab68ad8fec06a123a5e7bc5f3df1752cca"
+    },
+    {
+      "path": "music-transpose.png",
+      "source": "Original music examples; scripts/build_lecture_08_music.py",
+      "sha256": "2f8cc563ec6e46a424b3afa58c224ab4e92a6c956cf7d40dd42b9eb3c6bc3695"
+    }
+  ],
+  "audio": [
+    {
+      "path": "speech-normal.wav",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 1.9273125,
+      "sha256": "1d39335bcf013a7ef24419ea5e972fda81fe5034ad137e7beb3f289ecb626172"
+    },
+    {
+      "path": "motif-120.wav",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 4.0,
+      "sha256": "489056c26fd38846561a44052f5ce93a55c5e3560891faab345a61961d3949e4"
+    },
+    {
+      "path": "motif-edited.wav",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 6.0,
+      "sha256": "d6902f7241d47a4b6eb05fae2553a31965fd2d89c85a5011e4589384e6680d69"
+    },
+    {
+      "path": "speech-pause.wav",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 2.8329375,
+      "sha256": "affcfba8eef3773c6a8efe87df93ea1d447516b342bc14989633d4504e249347"
+    },
+    {
+      "path": "melody-backward.wav",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 3.0,
+      "sha256": "391720840253d165bec08f2655e0eacae19da0b36b23f2c54adc1c2b129ecff9"
+    },
+    {
+      "path": "speech-zero-phase.wav",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 1.9273125,
+      "sha256": "ea5dca502957644d16ca84a27c86968d9a66dc0ea810c1796d6300cf7dbd9d75"
+    },
+    {
+      "path": "tone-bright.wav",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 0.6,
+      "sha256": "120becf302ea06082ffda02a66d922bb4657dd26e97bfc338a2a6259267f8fef"
+    },
+    {
+      "path": "melody-forward.wav",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 3.0,
+      "sha256": "ff5e566a395a0a994d926ac999f23dfb286035132194be66dfbf88a2bc24f696"
+    },
+    {
+      "path": "motif-80.wav",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 6.0,
+      "sha256": "c38d4faa641c9fd8cdd48231c5f1d7d07518f4b8542eca95537f0bb6f61a03ed"
+    },
+    {
+      "path": "contour-2.wav",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 0.7,
+      "sha256": "0e36d5d7b55bfc395f395911f034308e05907a52531faeaac372634d83d32760"
+    },
+    {
+      "path": "musicgen-official.wav",
+      "rate": 32000,
+      "channels": 1,
+      "duration": 8.0,
+      "sha256": "3c9af11f71d6744d9d0de09aa5abdcea6136751a4001692f28c6337f4db57fa1"
+    },
+    {
+      "path": "contour-3.wav",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 0.7,
+      "sha256": "2421c6d2fd73be1e5149e7fda8cbd025ff107849fb83eb86a93a6eec61805e0e"
+    },
+    {
+      "path": "contour-1.wav",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 0.7,
+      "sha256": "0f7258e0188a43ef9fe3260b29ddb55e48809ff8a36209ab4a4600c53f5dbeb5"
+    },
+    {
+      "path": "speech-slow.wav",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 2.546625,
+      "sha256": "44807d786cb91669f2991fb824fee47ca3fa85e98a787b27a55a14f5a5c9fc71"
+    },
+    {
+      "path": "contour-4.wav",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 0.7,
+      "sha256": "976d52cd34efcceb8a70fa51bad4ff2ecbb5cba209d62b71a36b61798f31e670"
+    },
+    {
+      "path": "speech-mel-griffin.wav",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 1.9273125,
+      "sha256": "53b0f88f10cd7d894800b0efa892b9feafddbdc9acac461a2bb5af6664bbed2f"
+    },
+    {
+      "path": "motif-bright.wav",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 6.0,
+      "sha256": "1710d1de88132d76c22d2e0a50a10bf033057d00caa7f77a4e7e850f4627ec47"
+    },
+    {
+      "path": "tone-high.wav",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 0.6,
+      "sha256": "503153897851a9facfbcbee378ca99bb8b4ded16519f7cfa4d0ed4a643381a83"
+    },
+    {
+      "path": "tone-low.wav",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 0.6,
+      "sha256": "2c0686bfee61289ccb731b6679a05376e5bfb2a97c40470cb1a93e0c0f4dc114"
+    },
+    {
+      "path": "stem-bass.wav",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 4.0,
+      "source": "Original analytic bass, kick and melody; no pretrained inference or separation",
+      "sha256": "0c6afa86372e5604e8e4cf547f945f9b60e3317968f686f79554d158b026c8dd"
+    },
+    {
+      "path": "stem-drums.wav",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 4.0,
+      "source": "Original analytic bass, kick and melody; no pretrained inference or separation",
+      "sha256": "b96f29834950dc48f3bdb0eb1323114c09cc187e05de62eff56617447ff504ce"
+    },
+    {
+      "path": "stem-melody.wav",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 4.0,
+      "source": "Original analytic bass, kick and melody; no pretrained inference or separation",
+      "sha256": "21eca4c0544461abe8350068a76bca49a12ba36feb1a9db79e7e039f2926f63a"
+    },
+    {
+      "path": "stem-mix.wav",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 4.0,
+      "source": "Original analytic bass, kick and melody; no pretrained inference or separation",
+      "sha256": "7b0636bae27cb53618643a89adb7aabcff38f850eaa40d889997f006948b4bed"
+    },
+    {
+      "path": "stem-no-drums.wav",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 4.0,
+      "source": "Original analytic bass, kick and melody; no pretrained inference or separation",
+      "sha256": "292785c188b3d27be1b5ed021c3a0ccd871244a51128fa85b5e400e2efa6db8d"
+    },
+    {
+      "path": "music-major.wav",
+      "source": "Original music examples; scripts/build_lecture_08_music.py",
+      "sha256": "d70bf357b521427ae2183ba5bf3ca8a8d9b6ac745f9480f719172a11bc58aa95",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 2.0
+    },
+    {
+      "path": "music-meter-3.wav",
+      "source": "Original music examples; scripts/build_lecture_08_music.py",
+      "sha256": "9b62ca6262ca413cea43219703981561ddf24e4ac2959a7b7b5ba3144456de98",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 3.0
+    },
+    {
+      "path": "music-meter-4.wav",
+      "source": "Original music examples; scripts/build_lecture_08_music.py",
+      "sha256": "c8ef2fc0a56181dcb24c97fb8b5514c8840e233ad26f7c9918ed0833189880ee",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 4.0
+    },
+    {
+      "path": "music-minor.wav",
+      "source": "Original music examples; scripts/build_lecture_08_music.py",
+      "sha256": "89cbbfa94c6a2953b4ff97d52c5144a975e3ce36c32f17661cad2dfa0293ff04",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 2.0
+    },
+    {
+      "path": "music-rhythm-even.wav",
+      "source": "Original music examples; scripts/build_lecture_08_music.py",
+      "sha256": "49d91ed46de47a33fa765095ab80469b532f7414b6ba474f8a002eee157a7288",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 4.0
+    },
+    {
+      "path": "music-rhythm-varied.wav",
+      "source": "Original music examples; scripts/build_lecture_08_music.py",
+      "sha256": "b3f1644accb931b0ba4e1afdfd8a86f7c792ec0289d0478a3edebfef05db424c",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 4.0
+    },
+    {
+      "path": "music-timbre-bright.wav",
+      "source": "Original music examples; scripts/build_lecture_08_music.py",
+      "sha256": "20c3583e1124d0b74a99670f168d77786c993b72e25b872bd4cbcefdbba6d973",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 4.0
+    },
+    {
+      "path": "music-timbre-soft.wav",
+      "source": "Original music examples; scripts/build_lecture_08_music.py",
+      "sha256": "f6e1b34af38f619b72cfc53019204654548e606e4eef309eabeb4b3825b254c9",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 4.0
+    },
+    {
+      "path": "music-transposed.wav",
+      "source": "Original music examples; scripts/build_lecture_08_music.py",
+      "sha256": "2e8df5c0bf51742bf4b0aa0e4d5539f43ddd00810cbdebadacced167e3af3797",
+      "rate": 16000,
+      "channels": 1,
+      "duration": 4.0
+    }
+  ]
+}

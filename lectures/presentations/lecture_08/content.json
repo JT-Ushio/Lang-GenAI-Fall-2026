@@ -1,0 +1,787 @@
+[
+  {
+    "title": "音乐生成：从乐谱到歌曲",
+    "paragraphs": [
+      "第八讲",
+      "节奏、旋律、和声、曲式与音乐生成模型"
+    ],
+    "figure": null,
+    "demo": null,
+    "snippet": null,
+    "sources": [],
+    "layout": null,
+    "notes": "",
+    "key": "old_0"
+  },
+  {
+    "key": "music_intro",
+    "title": "一段音乐包含哪些可以控制的内容？",
+    "paragraphs": [
+      "旋律组织音高的先后；节奏组织音符的长短与位置；和声组织同时响起的音；音色体现声音质感。",
+      "曲式把片段组织成主歌、副歌和桥段；编配决定何时出现人声、鼓、低音和其他乐器。",
+      "本课使用原创旋律“宫—商—角—徵—羽—徵—角—宫”，逐项改变音乐条件，再连接到生成模型。"
+    ],
+    "figure": null,
+    "demo": null,
+    "snippet": null,
+    "sources": [],
+    "layout": null,
+    "notes": ""
+  },
+  {
+    "key": "music_industry",
+    "title": "音乐产业：创作、制作、发行与消费",
+    "paragraphs": [
+      "一首歌连接词曲创作、编曲、演唱、录音混音、版权授权、发行传播和现场演出。模型可介入多个环节。",
+      "IFPI 披露：2025 年全球录制音乐收入 317 亿美元，同比增长 6.4%；付费流媒体订阅账户用户为 8.37 亿。",
+      "中国传媒大学团队报告：2025 年中国音乐产业总规模约 5190.35 亿元，包含演出、乐器与教育等。它与全球“录制音乐收入”的范围不同。"
+    ],
+    "figure": null,
+    "demo": null,
+    "snippet": null,
+    "sources": [
+      "https://www.ifpi.org/global-music-report-2026-global-recorded-music-revenues-grow-6-4-as-record-companies-drive-innovation/",
+      "https://www.cflac.org.cn/new_zixun/202606/t20260617_1366277.html"
+    ],
+    "layout": null,
+    "notes": "数据年度为 2025，报告发布于 2026。不得据两个不同范围数字计算中国全球占比。"
+  },
+  {
+    "key": "music_business",
+    "title": "Suno：从歌曲生成模型到创作平台",
+    "paragraphs": [
+      "2026-06-03，Suno 公告 D 轮融资超过 4 亿美元，投后估值为 54 亿美元。估值属于公司，不是某个模型版本。",
+      "官方 Careers 页面披露：累计超过 1 亿人曾用 Suno 创作音乐，2026 年初付费订阅者超过 200 万，年化收入运行率为 3 亿美元。"
+    ],
+    "figure": null,
+    "demo": null,
+    "snippet": null,
+    "sources": [
+      "https://suno.com/blog/series-d-announcement",
+      "https://about.suno.com/careers"
+    ],
+    "layout": null,
+    "notes": "核对日期 2026-11-16。官方自报数据并非审计财务报表。"
+  },
+  {
+    "key": "music_beat",
+    "title": "拍、速度与拍号",
+    "paragraphs": [
+      "拍（beat）是计量音乐时间的参照。速度 BPM 表示每分钟有多少个指定单位拍；120 BPM 下，一拍是 0.5 秒。",
+      "4/4 拍通常每小节有四个四分音符拍；3/4 拍有三个。拍号不能只靠“每秒敲几下”决定。",
+      "试听在相同速度下，四拍一组与三拍一组的重音。程序只模拟小节首拍较强的简单模式。"
+    ],
+    "figure": "music-meter.png",
+    "demo": "music_meter_code",
+    "snippet": null,
+    "sources": [],
+    "layout": null,
+    "notes": ""
+  },
+  {
+    "key": "music_rhythm",
+    "title": "同一旋律可以有不同节奏",
+    "paragraphs": [
+      "两段保持相同的八个音高与总拍数。第一段每音一拍；第二段使用半拍、一拍和两拍的时值。",
+      "时值（duration）描述音持续多久；起音位置（onset）描述音何时开始。节奏包含声音与休止的时间组织。",
+      "保持 120 BPM，两段都是八拍、四秒。总长度相同，音乐的推进与停顿仍会改变。"
+    ],
+    "figure": "music-rhythm.png",
+    "demo": "music_rhythm_code",
+    "snippet": "beats = torch.tensor([.5,.5,1,2,.5,.5,1,2])\nseconds = beats * 60 / 120\nonsets = torch.cat([torch.zeros(1),\n                    seconds.cumsum(0)[:-1]])\nprint(seconds, onsets)",
+    "sources": [],
+    "layout": null,
+    "notes": ""
+  },
+  {
+    "key": "music_pitch",
+    "title": "音高、音程、音阶与移调",
+    "paragraphs": [
+      "在十二平均律中，一个八度分为十二个半音。MIDI 音高编号每增加 1，频率乘以 2^(1/12)；69 对应 A4 的 440 Hz。",
+      "音程描述两个音的距离。把整段旋律升高两个半音，保留相邻音程与时值，就是一次移调。",
+      "本例使用 C、D、E、G、A 五个音级；这只是便于演示的五声音阶，不代表所有音乐使用同一音阶体系。"
+    ],
+    "figure": "music-transpose.png",
+    "demo": "music_transpose_code",
+    "snippet": "notes = torch.tensor([60,62,64,67,69,67,64,60])\nshifted = notes + 2\nassert torch.equal(notes.diff(), shifted.diff())\nhz = 440 * 2 ** ((notes.float()-69)/12)",
+    "sources": [],
+    "layout": null,
+    "notes": ""
+  },
+  {
+    "key": "music_harmony",
+    "title": "和声：同时发声的音怎样组合？",
+    "paragraphs": [
+      "旋律强调音的先后，和声关注同时响起及相继连接的音。三和弦是三个音构成的常见和声单位。",
+      "C 大三和弦为 C–E–G；C 小三和弦为 C–E♭–G。两者保持根音与五度，只改变中间的三度音。",
+      "试听这一个半音的变化。大小和弦的感受还取决于节奏、编配与文化经验，不能固定等同于快乐或悲伤。"
+    ],
+    "figure": "music-chords.png",
+    "demo": "music_chord_code",
+    "snippet": null,
+    "sources": [],
+    "layout": null,
+    "notes": ""
+  },
+  {
+    "key": "music_timbre",
+    "title": "同一旋律、同一节奏，改变音色",
+    "paragraphs": [
+      "音色（timbre）使相同音高的钢琴、笛子与人声仍能被区分。频谱、起音、衰减和演奏方式都会影响它。",
+      "本例保持音高、时值与包络，只改变谐波比例，比较较柔和与较明亮的合成音。它们不是对真实乐器的精确模拟。",
+      "“换成古筝”不仅是改变一个频率；模型还需学习拨弦音头、共鸣、装饰音和具体演奏法。"
+    ],
+    "figure": null,
+    "demo": "music_timbre_code",
+    "snippet": null,
+    "sources": [],
+    "layout": null,
+    "notes": ""
+  },
+  {
+    "key": "music_form",
+    "title": "曲式：重复、变化、对比与回归",
+    "paragraphs": [
+      "主歌（verse）常推动叙述，副歌（chorus）常承载反复出现的核心乐句，桥段（bridge）可提供对比与过渡。",
+      "A–B–A′–B–C–B′ 是一种示意结构。相同字母表示材料相关，撇号表示变化；真实歌曲没有唯一模板。",
+      "段落级控制需要让歌词、旋律、乐器密度与能量变化相互配合。这正是 Muse 分段条件和音乐规划模型的任务。"
+    ],
+    "figure": "music-form.png",
+    "demo": null,
+    "snippet": null,
+    "sources": [],
+    "layout": null,
+    "notes": ""
+  },
+  {
+    "key": "music_representation",
+    "title": "乐谱与录音：两种音乐表示",
+    "paragraphs": [
+      "符号表示记录音高、起音、时值、速度和乐器等事件。钢琴卷帘图用横轴表示时间，纵轴表示音高。",
+      "音频表示记录实际声波，保留音色、演唱、空间与制作细节。相同乐谱可对应多种演奏和录音。",
+      "MIDI 是事件与控制信息的协议，不是声音文件。课堂用整数数组模拟事件，再由简单合成器生成波形。"
+    ],
+    "figure": "music-rhythm.png",
+    "demo": "music_score_code",
+    "snippet": null,
+    "sources": [],
+    "layout": null,
+    "notes": ""
+  },
+  {
+    "key": "music_codec",
+    "title": "音乐 codec：把录音压缩成可预测的表示",
+    "paragraphs": [
+      "音乐生成模型常先用神经音频编解码器压缩录音：编码器得到潜表示，量化器产生编号，解码器恢复声音。",
+      "多个残差码本可以从粗到细补充录音信息；它们不分别对应钢琴、鼓或人声。音轨与码本是不同轴。",
+      "MusicGen 预测多码本离散编号；ACE-Step 更新连续声学潜变量。两者都需要把表示还原为可听音乐。"
+    ],
+    "figure": null,
+    "demo": null,
+    "snippet": null,
+    "sources": [
+      "https://arxiv.org/abs/2306.05284",
+      "https://arxiv.org/abs/2602.00744"
+    ],
+    "layout": null,
+    "notes": ""
+  },
+  {
+    "key": "music_prompt",
+    "title": "把音乐意图写成分层条件",
+    "paragraphs": [
+      "全局条件：“中文校园民谣，4/4 拍，96 BPM，木吉他与轻鼓点”。歌词：“晚风经过窗前，灯光照亮书页”。",
+      "段落条件：“主歌疏朗，副歌增加和声与鼓点”。保留条件：“修改副歌歌词，保持原旋律与伴奏”。",
+      "文字只是表达意图的一种接口。精确旋律可用乐谱或哼唱，精确节奏可用事件序列，局部编配可用参考音轨。"
+    ],
+    "figure": null,
+    "demo": null,
+    "snippet": null,
+    "sources": [],
+    "layout": null,
+    "notes": ""
+  },
+  {
+    "key": "music_routes",
+    "title": "音乐生成模型的四种建模路线",
+    "paragraphs": [
+      "离散编号自回归：MusicGen、Muse、SongGen、MusicGen-Stem。像续写词元一样生成音乐编码。",
+      "连续潜变量生成：早期 ACE-Step 使用流匹配；ACE-Step 1.5 进一步加入语言模型规划与 DiT 声学渲染。",
+      "符号与音频统一：YuE2 将可读乐谱、语义词元与连续声学生成连接。Suno 的内部架构不据产品演示推定。"
+    ],
+    "figure": null,
+    "demo": null,
+    "snippet": null,
+    "sources": [
+      "https://arxiv.org/abs/2306.05284",
+      "https://arxiv.org/abs/2601.03973",
+      "https://arxiv.org/abs/2506.00045",
+      "https://arxiv.org/abs/2602.00744",
+      "https://arxiv.org/abs/2609.33757"
+    ],
+    "layout": null,
+    "notes": ""
+  },
+  {
+    "key": "music_timeline_a",
+    "title": "时间线与研究团队：2023—2025",
+    "paragraphs": [
+      "2023-06-08｜MusicGen｜Meta AI：多码本音乐语言模型，文本与旋律条件。",
+      "2025-01-03｜MusicGen-Stem｜Meta、IRCAM–CNRS–索邦等：鼓、低音和其他分轨。",
+      "2025-02-18｜SongGen｜上海人工智能实验室及北航、港中文等：歌曲与人声／伴奏双轨。",
+      "2025-05-28｜ACE-Step｜ACE Studio：连续潜变量音乐生成与编辑。"
+    ],
+    "figure": null,
+    "demo": null,
+    "snippet": null,
+    "sources": [
+      "https://arxiv.org/abs/2306.05284",
+      "https://arxiv.org/html/2501.01757",
+      "https://arxiv.org/html/2502.13128",
+      "https://arxiv.org/html/2506.00045"
+    ],
+    "layout": null,
+    "notes": "日期采用论文首次提交时间，不等同于代码或模型权重发布时间。列核心团队而非完整作者单位名单。"
+  },
+  {
+    "key": "music_timeline_b",
+    "title": "时间线与研究团队：2026",
+    "paragraphs": [
+      "2026-01-07｜Muse｜复旦 NLP：中英歌曲数据、分段控制与可复现训练。",
+      "2026-01-31｜ACE-Step 1.5｜ACE Studio、StepFun：规划、声学渲染与多任务编辑。",
+      "2026-09-09｜Suno v6｜Suno：商业产品发布，多模态条件与局部编辑。",
+      "2026-09-27｜YuE2｜HKUST／HKGAI、M-A-P 等：符号乐谱与歌曲音频统一。"
+    ],
+    "figure": null,
+    "demo": null,
+    "snippet": null,
+    "sources": [
+      "https://arxiv.org/html/2601.03973",
+      "https://arxiv.org/html/2602.00744",
+      "https://suno.com/release-notes/introducing-v6",
+      "https://arxiv.org/html/2609.33757"
+    ],
+    "layout": null,
+    "notes": "除 Suno 使用官方产品发布日期外，采用论文首次提交时间。"
+  },
+  {
+    "title": "MusicGen：音频词元语言模型",
+    "paragraphs": [
+      "音频先经 EnCodec 压缩成多条码本编号序列。文字经 T5 编码，作为生成条件。",
+      "Transformer 逐步预测音频编号，再由 EnCodec 解码器恢复音乐波形。",
+      "本课固定讲经典单声道四码本配置。其旋律条件版本还可以读取 chromagram（色度图）。"
+    ],
+    "figure": "musicgen-architecture.png",
+    "demo": null,
+    "snippet": null,
+    "sources": [
+      "https://arxiv.org/abs/2306.05284",
+      "https://github.com/facebookresearch/audiocraft/blob/main/docs/MUSICGEN.md"
+    ],
+    "layout": "figure",
+    "notes": "AI 辅助生成的中文架构教学图。训练与推理合绘，解码前需要取消码本延迟。代码配置与权重版本需对应。",
+    "key": "old_24"
+  },
+  {
+    "title": "MusicGen small 的维度",
+    "paragraphs": [
+      "32 kHz 单声道的一秒波形约有 32,000 点，编码为 50 个时间位置、每处四个编号。",
+      "小型 LM 使用 24 层、1024 隐藏维、16 个注意力头。每个码本有 2048 个编号。",
+      "五秒的码本张量为 [B,4,250]，预测分数可写成 [B,4,S,2048]，S 取决于排列方式。"
+    ],
+    "figure": null,
+    "demo": "music_shape_code",
+    "snippet": null,
+    "sources": [
+      "https://github.com/facebookresearch/audiocraft/blob/main/docs/MUSICGEN.md",
+      "https://github.com/facebookresearch/audiocraft/blob/main/config/model/lm/model_scale/small.yaml"
+    ],
+    "layout": null,
+    "notes": "",
+    "key": "old_25"
+  },
+  {
+    "title": "代码实验：码本的延迟排列",
+    "paragraphs": [
+      "四条码本流使用 [0,1,2,3] 的延迟。不同流错开后，在同一个生成步预测各自当前位置。",
+      "六个原始时间位置变成九个排列位置，填充位置用 −1 表示。",
+      "有效位置参与损失，空位置需要掩蔽。总生成步数与四条流直接串联的长度不同。"
+    ],
+    "figure": "delay-pattern.png",
+    "demo": "delay_code",
+    "snippet": null,
+    "sources": [
+      "https://arxiv.org/abs/2306.05284",
+      "https://github.com/facebookresearch/audiocraft/blob/main/config/model/lm/musicgen_lm.yaml"
+    ],
+    "layout": null,
+    "notes": "",
+    "key": "old_26"
+  },
+  {
+    "title": "MusicGen 的数据与训练流程",
+    "paragraphs": [
+      "先训练或选定音频 codec，并为训练音乐提取目标编号。",
+      "整理音乐片段与描述，抽取时间窗口，用冻结文本编码器提供条件，训练音频 LM。",
+      "训练时读取正确的历史编号，推理时接回模型已生成的编号。通过条件丢弃还可训练无条件分支。"
+    ],
+    "figure": null,
+    "demo": null,
+    "snippet": null,
+    "sources": [
+      "https://github.com/facebookresearch/audiocraft/blob/main/docs/MUSICGEN.md",
+      "https://github.com/facebookresearch/audiocraft/blob/main/config/conditioner/text2music.yaml"
+    ],
+    "layout": null,
+    "notes": "",
+    "key": "old_27"
+  },
+  {
+    "title": "代码实验：训练一个条件旋律模型",
+    "paragraphs": [
+      "两层、宽度 32 的因果 Transformer，词表含五个音级和起止标记。",
+      "十条五音级循环乐句，条件指定前进或后退。给定首音后，学习后续四音和结束标记。",
+      "模型训练与自由生成真实执行。数据规模用于检查流程，音符编号随后由解析合成器变成波形。"
+    ],
+    "figure": "tiny-training.png",
+    "demo": "train_music_code",
+    "snippet": null,
+    "sources": [],
+    "layout": null,
+    "notes": "",
+    "key": "old_28"
+  },
+  {
+    "title": "试听模型自己生成的音符",
+    "paragraphs": [
+      "条件一为“从宫开始，按五声音阶前进”，条件二为“从羽开始，按五声音阶后退”。",
+      "生成过程中每次读取自己刚预测的音符，直到输出结束标记。",
+      "这里直接建模可读音级。完整 MusicGen 则建模含有复杂音色与录音细节的 codec 编号。"
+    ],
+    "figure": "tiny-pianoroll.png",
+    "demo": "generated_listening",
+    "snippet": null,
+    "sources": [],
+    "layout": null,
+    "notes": "",
+    "key": "old_29"
+  },
+  {
+    "title": "MusicGen 官方生成样例",
+    "paragraphs": [
+      "中文释义为“旋律抓耳、带热带打击乐、节奏轻快的流行舞曲，适合海滩”。",
+      "作者展示页采用英文提示。本课节选其 MusicGen 音频前八秒，模型组别为页面所述 3.3B。",
+      "听旋律、节奏和音色的共同出现，再回到编号预测与解码的结构。"
+    ],
+    "figure": null,
+    "demo": "official_music_listening",
+    "snippet": null,
+    "sources": [
+      "https://ai.honu.io/papers/musicgen/"
+    ],
+    "layout": null,
+    "notes": "源文件 samples/musicgen/000_sample.mp3，转为 32 kHz 单声道，取前八秒。作者公开示例，非课堂本机模型推理。",
+    "key": "old_30"
+  },
+  {
+    "title": "ACE-Step 1.5：规划与声学生成",
+    "paragraphs": [
+      "语言模型组织歌词、描述和音乐信息，并可生成低频率离散音乐码。",
+      "条件进入 DiT（Diffusion Transformer，扩散 Transformer），在连续潜空间生成声学细节。",
+      "1D VAE 将潜变量解码为 48 kHz 立体声。本课对应 1.5 报告的基础架构。"
+    ],
+    "figure": "ace15-official.png",
+    "demo": null,
+    "snippet": null,
+    "sources": [
+      "https://arxiv.org/abs/2602.00744"
+    ],
+    "layout": "figure",
+    "notes": "原技术报告 Figure 2。报告的基础 DiT 约 2B，后续 XL 属于其他配置。",
+    "key": "old_31"
+  },
+  {
+    "title": "ACE-Step 1.5 的时间尺度",
+    "paragraphs": [
+      "报告中的 VAE 每秒用 25 个 64 维潜向量表示音频。十秒对应 [B,250,64]。",
+      "规划侧量化码为 5 Hz，十秒约 50 个编号。DiT patchify 还会将潜序列长度减半。",
+      "低频码提供结构条件，连续潜变量保留更细的声学信息。"
+    ],
+    "figure": null,
+    "demo": "continuous_shape_code",
+    "snippet": null,
+    "sources": [
+      "https://arxiv.org/abs/2602.00744"
+    ],
+    "layout": null,
+    "notes": "",
+    "key": "old_32"
+  },
+  {
+    "title": "代码实验：流匹配的训练目标",
+    "paragraphs": [
+      "采样噪声 z₀ 与目标 z₁，构造 zₜ=(1−t)z₀+t z₁，直线路径的目标速度是 z₁−z₀。",
+      "网络学习根据当前状态、时间和条件预测速度。积分得到生成轨迹。",
+      "小例子用已知端点验证直线路径与 Euler 更新，便于理解目标的来源。"
+    ],
+    "figure": "flow-path.png",
+    "demo": "flow_code",
+    "snippet": "noise, target, state, velocity, final = (\n    flow_matching_example())\nprint(state)\nprint(velocity)\nassert torch.allclose(final, target,\n                      atol=1e-6)",
+    "sources": [
+      "https://arxiv.org/abs/2210.02747"
+    ],
+    "layout": null,
+    "notes": "",
+    "key": "old_33"
+  },
+  {
+    "title": "ACE-Step 的数据加工与训练阶段",
+    "paragraphs": [
+      "构建音乐—描述样本，增加歌词与语言标注，并过滤内容、标注和音频之间的不一致。",
+      "训练阶段从基础文生音乐扩展到带来源与遮罩的多任务，再进行高质量微调和蒸馏。",
+      "歌声与伴奏分离等加工可以产生更多训练条件。各阶段的具体规则需结合版本代码核对。"
+    ],
+    "figure": null,
+    "demo": null,
+    "snippet": null,
+    "sources": [
+      "https://arxiv.org/abs/2602.00744"
+    ],
+    "layout": null,
+    "notes": "",
+    "key": "old_34"
+  },
+  {
+    "title": "中文歌词与旋律的对齐",
+    "paragraphs": [
+      "原创短句“晚风经过窗前，灯光照亮书页”可以分成两句，各安排若干音符。",
+      "一个字可以跨多个音符，也可以在一个音符内快速带过多个字，时长需要结合节奏安排。",
+      "汉语字调、旋律走向、押韵与句末落音会互相影响，需要同时听内容和音乐组织。"
+    ],
+    "figure": null,
+    "demo": null,
+    "snippet": null,
+    "sources": [],
+    "layout": null,
+    "notes": "",
+    "key": "old_35"
+  },
+  {
+    "title": "YuE2：可读乐谱参与歌曲生成",
+    "paragraphs": [
+      "条件包括文字风格和歌词。模型先产生可编辑的符号乐谱，再产生语义词元和连续声学潜变量。",
+      "乐谱采用 ABC 文本形式，表达调性、节拍、速度、旋律与和弦。",
+      "AR–NAR MoT 将自回归离散预测和非自回归声学生成放入同一模型框架。"
+    ],
+    "figure": "yue2-official.png",
+    "demo": null,
+    "snippet": null,
+    "sources": [
+      "https://arxiv.org/abs/2609.33757"
+    ],
+    "layout": "figure",
+    "notes": "本课使用 2026 年 YuE2 报告。原 YuE（2025）是另一代模型，避免混用原版分阶段 RVQ 叙述。",
+    "key": "old_36"
+  },
+  {
+    "title": "YuE2 的训练材料与信息流",
+    "paragraphs": [
+      "录音经转写与音乐理解工具产生符号和语义监督，再与声学目标对齐。",
+      "自回归流预测乐谱和语义词元，连续流学习声学潜变量的更新。两流共享注意力交互，并保留专用参数。",
+      "可读乐谱让修改落到具体旋律或和弦，再生成新的录音。"
+    ],
+    "figure": null,
+    "demo": null,
+    "snippet": null,
+    "sources": [
+      "https://arxiv.org/abs/2609.33757"
+    ],
+    "layout": null,
+    "notes": "",
+    "key": "old_37"
+  },
+  {
+    "title": "代码实验：把音乐反馈变成符号修改",
+    "paragraphs": [
+      "给定一段原创音级序列，只把第三个音从“商”改为“角”，其余音级与时长保持。",
+      "先检查编号，再听修改前后的合成旋律。",
+      "本例直接编辑符号数组，演示可检查的控制接口。完整歌曲模型还要学习如何把计划实现为声音。"
+    ],
+    "figure": null,
+    "demo": "edit_score_code",
+    "snippet": "notes = torch.tensor([0,2,1,4,3,2,0,1])\nedited = notes.clone()\nedited[2] = 2\nassert torch.equal(notes[:2], edited[:2])\nassert torch.equal(notes[3:], edited[3:])",
+    "sources": [],
+    "layout": null,
+    "notes": "",
+    "key": "old_38"
+  },
+  {
+    "key": "muse_architecture",
+    "title": "Muse：复旦的分段歌曲生成模型",
+    "paragraphs": [
+      "Muse 在 Qwen3 上扩充 MuCodec 音频词表，用同一自回归序列连接风格、歌词与音频编号。",
+      "MuCodec 的音频码本容量为 16,384。模型逐段预测音频编号，再用 codec 解码为混合人声与伴奏的波形。",
+      "技术报告主表使用 Muse-0.6B；仓库还提供其他规模。公开推理分为 vLLM 生成编号与 MuCodec 解码两步。"
+    ],
+    "sources": [
+      "https://arxiv.org/abs/2601.03973",
+      "https://github.com/yuhui1038/Muse",
+      "https://github.com/yuhui1038/Muse/tree/main/infer"
+    ],
+    "figure": "muse-official.png",
+    "demo": null,
+    "snippet": null,
+    "layout": "figure",
+    "notes": "Muse Figure 1。此处是报告架构与接口讲解，未运行其预训练权重。",
+    "table": null
+  },
+  {
+    "key": "muse_data",
+    "title": "Muse 的数据怎样构建？",
+    "paragraphs": [
+      "作者构建 116,489 首中英合成歌曲：文字模型拟定风格与分段歌词，Suno V5 生成完整歌曲。",
+      "再由音频理解模型核查并重写风格描述，补充段落级标注；生成提示与实际听感可能存在差异。",
+      "训练将分段条件与目标音频编号配对，采用因果语言建模交叉熵。数据、权重及训练评测流程均公开，使用遵循发布许可。"
+    ],
+    "sources": [
+      "https://arxiv.org/abs/2601.03973",
+      "https://github.com/yuhui1038/Muse"
+    ],
+    "figure": "muse-data-official.png",
+    "demo": null,
+    "snippet": null,
+    "layout": "figure",
+    "notes": "作者声明数据获许可发布；不由课程重新作权利担保。源数据是人声与伴奏混合录音，不是多轨真值。论文正文从 Qwen3-0.6B 做 SFT。",
+    "table": null
+  },
+  {
+    "key": "muse_segments",
+    "title": "分段控制与下一词元监督",
+    "paragraphs": [
+      "原创中文条件：全曲为轻柔校园民谣；主歌“晚风经过窗前”配木吉他；副歌“灯光照亮书页”加入鼓点。",
+      "每轮给出段落风格与歌词，随后预测该段音频；此前音频进入上下文，帮助段落衔接。",
+      "代码用教学编号演示标签右移与条件掩蔽；真实输入格式、音素提示和特殊标记应按官方样例构造。"
+    ],
+    "sources": [
+      "https://github.com/yuhui1038/Muse/blob/main/infer/test.jsonl",
+      "https://github.com/yuhui1038/Muse/tree/main/train"
+    ],
+    "figure": null,
+    "demo": "muse_supervision_code",
+    "snippet": "sequence = torch.tensor([7, 8, 100, 103, 109])\nis_audio = torch.tensor([0, 0, 1, 1, 1]).bool()\ninputs = sequence[:-1]\nlabels = sequence[1:].clone()\nlabels[~is_audio[1:]] = -100\nprint(inputs, labels)",
+    "layout": null,
+    "notes": "编号是假设的小型序列：7、8 表示条件，100、103、109 表示音频；不是 Muse 的真实词表映射。此处只运行标签构造，不运行 Muse 推理。",
+    "table": null
+  },
+  {
+    "key": "model_comparison",
+    "title": "ACE-Step 与 Muse：先核对版本和评测",
+    "paragraphs": [
+      "Muse 论文 Table 1 中，0.6B 的 Muse 在这三项指标上优于早期 ACE-Step 3.5B；Muse 还获得分段风格条件，基线仅用全局条件。",
+      "该基线引用 2025 年 ACE-Step 论文，不是 ACE-Step 1.5。1.5 报告没有 Muse，测试样本与条件也不同，无法从两篇表格得出双方胜负。",
+      "PER 检查歌词音素错误；MuLan-T 检查文字与音乐的关联；PQ 估计制作质量。数值均为作者报告，未在本课复测。"
+    ],
+    "sources": [
+      "https://arxiv.org/abs/2601.03973",
+      "https://arxiv.org/abs/2506.00045",
+      "https://arxiv.org/abs/2602.00744"
+    ],
+    "figure": null,
+    "demo": null,
+    "snippet": null,
+    "layout": null,
+    "notes": "不把 ACE-Step 1.5 的指标拼到这张表。正式对比需固定模型版本、提示/歌词、种子、时长、采样预算和同一评测器；增加盲听。",
+    "table": [
+      [
+        "Muse 论文同一评测表",
+        "PER ↓",
+        "MuLan-T ↑",
+        "制作质量 PQ ↑"
+      ],
+      [
+        "ACE-Step 3.5B（早期）",
+        "0.39",
+        "0.28",
+        "7.31"
+      ],
+      [
+        "Muse 0.6B",
+        "0.16",
+        "0.33",
+        "8.14"
+      ]
+    ]
+  },
+  {
+    "key": "suno_evidence",
+    "title": "Suno：产品能力与公开技术证据",
+    "paragraphs": [
+      "Suno 在 2026-09-09 发布 v6，官方介绍文字、音频、图像和视频条件，以及局部改词、改编与多来源创作。",
+      "截至 2026-11-16，本课未检索到可核验的 Suno v5／v6 完整公开架构与训练技术报告；不把第三方推测画成确定的网络结构。",
+      "Suno 团队早期开放的 Bark 是 Transformer 文本到音频模型，支持语音及简单音乐音效；Bark 的实现不能视为当前 Suno 歌曲模型的架构。"
+    ],
+    "sources": [
+      "https://suno.com/release-notes/introducing-v6",
+      "https://github.com/suno-ai/bark"
+    ],
+    "figure": null,
+    "demo": null,
+    "snippet": null,
+    "layout": null,
+    "notes": "产品发布说明可以证明宣称的接口；内部表示、训练配方与权重需独立证据。资料检索日期 2026-11-16。",
+    "table": null
+  },
+  {
+    "key": "track_representation",
+    "title": "声道、音轨与码本是三个维度",
+    "paragraphs": [
+      "声道（channel）描述播放布局，如左、右声道；音轨或分轨（track／stem）描述可独立编辑的声音来源，如人声、鼓和低音。",
+      "一条鼓轨也可以是立体声；一个单声道混音也可用多个 RVQ 码本编码。多码本不等于多音轨。",
+      "波形可写成 [批次,音轨,声道,采样点]，编码可写成 [批次,音轨,码本,时间帧]。具体轴顺序以实现为准。"
+    ],
+    "sources": [
+      "https://arxiv.org/abs/2502.13128",
+      "https://arxiv.org/abs/2501.01757"
+    ],
+    "figure": null,
+    "demo": null,
+    "snippet": null,
+    "layout": null,
+    "notes": "stems 通常是成组来源，例如整套鼓；track 在工作站中可更细。区分原生联合生成、后处理分离与多说话流建模。",
+    "table": null
+  },
+  {
+    "key": "songgen_tracks",
+    "title": "SongGen：人声与伴奏的联合建模",
+    "paragraphs": [
+      "SongGen 提供混合输出与双轨输出两种模式。双轨版本分别编码人声和伴奏，让同一个自回归模型学习两轨的依赖。",
+      "公开 Interleaving A–V 权重按伴奏与人声流交错建模，解码得到两段同步波形，可以分别调节增益后相加。",
+      "同一时间的演唱、节奏与和声需要协调；独立随机生成两首声音再叠加，不会自动学到这种关系。"
+    ],
+    "sources": [
+      "https://arxiv.org/abs/2502.13128",
+      "https://github.com/LiuZH-19/SongGen"
+    ],
+    "figure": "songgen-official.png",
+    "demo": null,
+    "snippet": null,
+    "layout": "figure",
+    "notes": "SongGen ICML 2025 Figure 2；公开双轨权重与推理返回 accompaniment、vocal 两数组。此页不是本机实测。",
+    "table": null
+  },
+  {
+    "key": "multitrack_models",
+    "title": "分轨生成、条件补轨与音源分离",
+    "paragraphs": [
+      "MusicGen-Stem 研究低音、鼓、其他三条分轨：各轨先编码为离散编号，模型联合建模，并能依据保留轨生成待修改轨。",
+      "中文条件示例：“保留鼓与低音，把其他轨改成钢琴”。SongGen 的人声／伴奏双轨是另一种轨道粒度。",
+      "音源分离从已有混音估计各轨，可能有串音；原生分轨生成直接建模目标轨。Suno 的分轨导出功能本身不能证明内部原生联合建模。"
+    ],
+    "sources": [
+      "https://arxiv.org/abs/2501.01757",
+      "https://simonrouard.github.io/musicgenstem/",
+      "https://github.com/LiuZH-19/SongGen"
+    ],
+    "figure": null,
+    "demo": null,
+    "snippet": null,
+    "layout": null,
+    "notes": "MusicGen-Stem 按论文和作者试听页介绍，不因摘要承诺开源就声称当前全部权重已核验可下载。ACE-Step 的 extraction/layering 接口属于另一类条件任务，需按具体版本验证。",
+    "table": null
+  },
+  {
+    "key": "multitrack_experiment",
+    "title": "代码与试听：独立分轨怎样混音？",
+    "paragraphs": [
+      "原创解析合成的低音、鼓点、旋律各四秒，组成 [3,64000] 张量。保持同一采样率与时间轴，用增益加权求和。",
+      "依次听三条独立音轨、完整混音、鼓点静音后的版本。五个文件共用振幅标尺，便于比较。",
+      "代码还将 [B,音轨,码本,T] 转成按时间交错的流并精确还原，解释接口；这里没有训练分轨生成模型。"
+    ],
+    "sources": [
+      "https://github.com/LiuZH-19/SongGen"
+    ],
+    "figure": "multitrack.png",
+    "demo": "multitrack_code",
+    "snippet": null,
+    "layout": null,
+    "notes": "低音、鼓点与旋律均由本课程序合成，没有音源分离，也不是 SongGen 推理结果。例子采用单声道分轨，峰值小于 0.95，保存时不逐轨归一化。",
+    "table": null
+  },
+  {
+    "title": "音乐模型的公开材料与许可",
+    "paragraphs": [
+      "MusicGen 提供推理与训练代码、权重和论文。代码 MIT，权重 CC BY-NC 4.0。",
+      "ACE-Step 1.5 提供代码、权重和技术报告，项目按 MIT 发布，具体组件另看其说明。",
+      "YuE2 提供代码、权重和报告。代码 Apache-2.0，权重采用 CC BY-NC 4.0 并附个人创作等额外许可。 Muse 提供数据与训练评测流程，使用前分别核对模型和数据许可。"
+    ],
+    "figure": null,
+    "demo": null,
+    "snippet": null,
+    "sources": [
+      "https://github.com/facebookresearch/audiocraft/blob/main/model_cards/MUSICGEN_MODEL_CARD.md",
+      "https://github.com/ace-step/ACE-Step-1.5",
+      "https://github.com/multimodal-art-projection/YuE/blob/main/MODEL_LICENSE",
+      "https://github.com/yuhui1038/Muse"
+    ],
+    "layout": null,
+    "notes": "",
+    "key": "old_39"
+  },
+  {
+    "title": "生成质量与条件控制的评价",
+    "paragraphs": [
+      "先固定提示、时长和采样预算，分别比较音质、旋律与节奏、歌词清晰度、结构和条件符合程度。",
+      "**FAD（Fréchet Audio Distance，弗雷歇音频距离）** 比较两组音频嵌入分布，需要足够样本与明确的特征模型。",
+      "**CLAP（Contrastive Language-Audio Pretraining，语言—音频对比预训练）** 相似度可辅助检查文字关联，主观听评还需覆盖音乐性。"
+    ],
+    "figure": null,
+    "demo": null,
+    "snippet": null,
+    "sources": [
+      "https://arxiv.org/abs/2306.05284",
+      "https://arxiv.org/abs/2602.00744",
+      "https://arxiv.org/abs/2609.33757"
+    ],
+    "layout": null,
+    "notes": "",
+    "key": "old_40"
+  },
+  {
+    "title": "声音来源、授权与创作记录",
+    "paragraphs": [
+      "参考声音需要有明确来源和使用权限，录音也可能包含身份线索。",
+      "复现时记录模型版本、输入文字、歌词、参考音频、随机种子与采样设置。",
+      "公开代码、模型权重与训练材料分别提供不同程度的可复现性，课程报告应逐项说明。"
+    ],
+    "figure": null,
+    "demo": null,
+    "snippet": null,
+    "sources": [],
+    "layout": null,
+    "notes": "",
+    "key": "old_41"
+  },
+  {
+    "title": "回顾与阅读",
+    "paragraphs": [
+      "音乐生成需要同时组织旋律、节奏、和声、音色与曲式，并协调歌词、人声和伴奏。",
+      "音符事件适合精确编辑，录音编码保留演奏细节，分轨表示支持独立控制与混音。",
+      "比较模型时，区分建模路线、条件输入、输出轨道、模型版本与评测协议。"
+    ],
+    "figure": null,
+    "demo": null,
+    "snippet": null,
+    "sources": [
+      "https://arxiv.org/abs/2412.10117",
+      "https://arxiv.org/abs/2306.05284",
+      "https://arxiv.org/abs/2602.00744",
+      "https://arxiv.org/abs/2609.33757",
+      "https://arxiv.org/abs/2410.00037",
+      "https://arxiv.org/abs/2601.03973",
+      "https://arxiv.org/abs/2502.13128"
+    ],
+    "layout": null,
+    "notes": "",
+    "key": "old_42"
+  }
+]

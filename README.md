@@ -20,6 +20,10 @@
 
 第七讲：`cd lectures && python3 execute.py -m lecture_07`，浏览 `?trace=var/traces/lecture_07.json`。介绍语音与语言对齐，包含正常／慢速试听、鸟叫／轻雨／同一角色四语配音的梅尔频谱对照、STFT、CTC 路径求和和可执行优化、Whisper tiny 维度、交叉注意力以及 WER/CER；配套 39 页中文演示文稿，见 [第七讲备课说明](lectures/notes/lecture_07.md)。常规编译无需下载模型。
 
+第八讲：在 lectures 目录执行 python3 execute.py -m lecture_08，浏览 ?trace=var/traces/lecture_08.json。围绕音乐的节拍、旋律、和声、音色、曲式、符号与录音表示展开，加入移调、节奏、和弦试听和代码，再讲 MusicGen、ACE-Step、YuE2、Muse 与多音轨生成。配套演示源 44 页；Moshi 为独立延伸文件。见 [备课说明](lectures/notes/lecture_08.md)。
+
+第九讲：`cd lectures && python3 execute.py -m lecture_09`，浏览 `?trace=var/traces/lecture_09.json`。围绕中文操作台视频，实算抽帧、短事件漏检、帧序打乱、时空块、答案监督与时间定位；包含三种视频理解架构图、Qwen2.5-VL-7B 维度演算、交互抽帧实验与 MOVA 同步音视频生成案例。普通编译不下载权重、不需要 GPU／FFmpeg；两课时安排和来源见 [第九讲备课说明](lectures/notes/lecture_09.md)。
+
 课件框架复用 [2026 春季《自然语言处理与语言习得》](https://github.com/JT-Ushio/nlp-and-la-spring-2026) 的 Python 执行轨迹生成器和 React Trace Viewer，保留 Markdown、公式、图片、链接、代码与变量展示、逐步浏览等功能。
 
 ## 安装与运行
